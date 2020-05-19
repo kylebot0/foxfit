@@ -3,8 +3,7 @@
 ## Collaboration
 When collaborating on this project, please do so as instructed below.
 ### Create a new issue
-To make changes, please first create a new issue. Add this issue to the project 'zorgcowboys' and move it to the right place on the [kanban board](https://github.com/lennartdeknikker/zorgpiraten/projects/1) under projects.
-
+To make changes, please first create a new issue. Add this issue to the project 'foxfit' and move it to the right place on the [kanban board](https://github.com/kylebot0/foxfit/projects/1) under projects.
 
 ### Create a new branch for this new issue
 Then create a new branch locally for the specific issue you're working on:

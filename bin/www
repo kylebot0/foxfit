@@ -7,7 +7,7 @@ const mysql = require('mysql');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '4000');
 app.set('port', port);
 
 const server = http.createServer(app);
@@ -71,7 +71,7 @@ con.connect((err) => {
 
 con.query('SELECT * FROM pam_data', function (error, results, fields) {
   if (error) throw error;
-  console.log(results, fields)
+  // console.log(results, fields)
 });
 
 con.end((err) => {});

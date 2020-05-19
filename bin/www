@@ -3,11 +3,10 @@
 const app = require('../app');
 const debug = require('debug')('meesterproef-1920:server');
 const http = require('http');
-const mysql = require('mysql');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || 9000);
 app.set('port', port);
 
 const server = http.createServer(app);
@@ -53,26 +52,3 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
-const con = mysql.createConnection({
-  host: process.env.HOSTNAME,
-  user: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE,
-  port: process.env.HOSTPORT
-})
-
-con.connect((err) => {
-  if(err){
-    console.log('Error connecting to Db');
-    return;
-  }
-  console.log('Connection established');
-});
-
-con.query('SELECT * FROM pam_data', function (error, results, fields) {
-  if (error) throw error;
-  console.log(results, fields)
-});
-
-con.end((err) => {});

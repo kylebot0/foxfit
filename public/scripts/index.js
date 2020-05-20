@@ -1,4 +1,4 @@
 var currentUrl = window.location.href
-fetch(currentUrl + 'data')
-.then(res => res.json())
-.then(res => {console.log(res)})
+fetch(currentUrl + 'pamdata/PA043F3')
+    .then(res => res.json())
+    .then(res => {console.log(res)})

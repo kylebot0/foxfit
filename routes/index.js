@@ -33,8 +33,25 @@ router.get('/pamdata/:id', async function(req, res) {
     const pamDataQuery = `SELECT * FROM simbapam.pam_data WHERE pam_id = "${pamId}" AND date BETWEEN '${dateDomain[0]}' AND '${dateDomain[1]}';`
     const pamData = await Api(pamDataQuery)
     
+    // then obtain goal data (we might not need this)
+    // const goalDataQuery = `SELECT * FROM simbapam.doelen WHERE username = "${userid}";`
+    // const goalData = await Api(goalDataQuery)
+    
+    // then obtain trophy data
+    const trophyDataQuery = `SELECT * FROM simbapam.trofee WHERE username = "${userid}";`
+    const trophyData = await Api(trophyDataQuery)
+
+    // then obtain day entries
+    const dailyDataQuery = `SELECT * FROM simbapam.userdagentries WHERE username = "${userid}";`
+    const dailyData = await Api(dailyDataQuery)
+
+    const combinedData = {
+      pamData: pamData,
+      trophyData: trophyData[0],
+      dailyData: dailyData
+    }
     // return pamdata
-    res.json({data: pamData})  
+    res.json({data: combinedData})  
 })
 
 module.exports = router

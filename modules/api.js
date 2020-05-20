@@ -22,7 +22,7 @@ async function apiData (query){
     let promise = await new Promise((resolve, reject) => {
         con.query(query, function (error, results, fields) {
             if (error) throw error
-            console.log('result:', results)
+            
             resolve(results)
         })})
     return await promise

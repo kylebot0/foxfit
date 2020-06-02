@@ -18,9 +18,9 @@ async function apiData (query){
         }
         console.log('Connection established')
     })
-      
-    let promise = await new Promise((resolve, reject) => {
-        con.query(query, function (error, results, fields) {
+    
+    let promise = await new Promise((resolve) => {
+        con.query(query, function (error, results) {
             if (error) throw error
             
             resolve(results)

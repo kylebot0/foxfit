@@ -46,9 +46,9 @@ router.get('/pamdata/:id', async function(req, res) {
     const dailyData = await Api(dailyDataQuery)
 
     const combinedData = {
-      pamData: pamData,
-      trophyData: trophyData[0],
-      dailyData: dailyData
+        pamData: pamData,
+        trophyData: trophyData[0],
+        dailyData: dailyData
     }
     // return pamdata
     res.json({data: combinedData})  

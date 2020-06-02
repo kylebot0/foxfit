@@ -1,6 +1,6 @@
 var express = require('express')
 var router = express.Router()
-const Utilities = require('../modules/Utilities')
+const Data = require('../modules/data')
 
 /* GET users listing. */
 router.get('/', function(req, res) {
@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
 })
 
 router.get('/data/:id', async (req, res) => {    
-    const data = await Utilities.getAllDataForUser(req.params.id)
+    const data = await Data.getAllDataForUser(req.params.id)
     res.json({data: data})  
 })
 

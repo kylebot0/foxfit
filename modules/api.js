@@ -13,7 +13,7 @@ const con = mysql.createConnection({
 async function apiData (query){  
     con.connect((err) => {
         if(err){
-            console.log('Error connecting to Db')
+            console.log('Error connecting to Db or a handshake is already enqued')
             return
         }
         console.log('Connection established')

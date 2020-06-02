@@ -5,7 +5,9 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 
 const indexRouter = require('./routes/index')
+const dataRouter = require('./routes/data')
 const dayGoalRouter = require('./routes/daygoal')
+const movementRouter = require('./routes/movement')
 
 const app = express()
 
@@ -20,7 +22,9 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
+app.use('/data', dataRouter)
 app.use('/dagdoel', dayGoalRouter)
+app.use('/beweging', movementRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

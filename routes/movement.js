@@ -8,7 +8,8 @@ router.get('/', function(req, res) {
 })
 
 router.get('/data/:id', async (req, res) => {    
-    const data = await Data.getAllDataForUser(req.params.id)
+    const pamData = await Data.getPamDataForUser(req.params.id)
+    const dailyData = await Data.getDailyDataForUser(req.params.id)
     res.json({data: data})  
 })
 

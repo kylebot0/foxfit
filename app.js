@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 
 const indexRouter = require('./routes/index')
+const dataRouter = require('./routes/data')
 const dayGoalRouter = require('./routes/daygoal')
 const movementRouter = require('./routes/movement')
 
@@ -21,6 +22,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
+app.use('/data', dataRouter)
 app.use('/dagdoel', dayGoalRouter)
 app.use('/beweging', movementRouter)
 

@@ -8,37 +8,13 @@ async function getData() {
     return json.data
 }
 
-
 getData().then(data => {
     const startDate = new Date(data.user[0].startdate)    
-    const weekDataDaily = filterForWeek(data.pamData, startDate, 6)
-    console.log(weekDataDaily)
-    
+    const pamDataForWeek = filterForWeek(data.pamData, startDate, 6)
+    const dailyDataForWeek = filterForWeek(data.daily, startDate, 6)
+    console.log(pamDataForWeek)
+    console.log(dailyDataForWeek)    
 })
-
-function filterForWeek(data, startDate, weekNumber) {
-    console.log(data, startDate)
-    const filteredData = data.filter(isWithinSelectedWeek)
-
-    function isWithinSelectedWeek(datapoint) {
-        const date = new Date(datapoint.date)
-        const daysAway = getDayDifference(startDate, date)
-        if (daysAway <= 7 * weekNumber && daysAway > 7 * (weekNumber - 1)) {
-            return true
-            
-        }
-        return false
-    }
-
-    function getDayDifference(date1, date2) {
-        const diffTime = Math.abs(date1 - date2)
-        let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-        return date2 < date1 ? diffDays * -1 : diffDays
-    }
-    
-    return filteredData
-}
-
 
 const graphContainer = document.getElementById('graph-container')
 const containerWidth = graphContainer.offsetWidth
@@ -118,4 +94,24 @@ const y = d3.scaleLinear()
 //     })
 
 
+// HELPER FUNCTIONS
+function filterForWeek(data, startDate, weekNumber) {
+    const filteredData = data.filter((datapoint) => {
+        return isWithinSelectedWeek(datapoint, startDate, weekNumber)
+    })
+    return filteredData    
+}
 
+function getDayDifference(date1, date2) {
+    const diffTime = Math.abs(date1 - date2)
+    let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return date2 < date1 ? diffDays * -1 : diffDays
+}
+
+// CHECKER FUNCTIONS
+function isWithinSelectedWeek(datapoint, startDate, weekNumber) {
+    const dateForDataPoint = new Date(datapoint.date)
+    const daysAway = getDayDifference(startDate, dateForDataPoint)
+    const withinWeek = daysAway <= 7 * weekNumber && daysAway > 7 * (weekNumber - 1)
+    return withinWeek ? true : false
+}

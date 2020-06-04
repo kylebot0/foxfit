@@ -1,4 +1,149 @@
+/* eslint-disable no-undef */
 
+// EXECUTED FUNCTIONS
+
+getData().then(data => {
+    const weekSelectElement = document.getElementById('select-week')
+
+    weekSelectElement.addEventListener('change', (event) => {
+        const startDate = new Date(data.user[0].startdate)   
+        const selectedWeekNr = event.target.selectedIndex
+        const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
+        const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
+
+        createGraphs(pamDataForWeek, dailyDataForWeek)
+        // updateFeelingGraph(dailyDataForWeek)
+    })
+})
+
+// GRAPH FUNCTIONS
+
+function createGraphs(pamData, dailyData) {    
+    const graphContainer = document.getElementById('graph-container')
+    graphContainer.innerHTML = ''
+
+    // graph size dynamics
+    const [containerWidth, containerHeight] = [graphContainer.offsetWidth, graphContainer.offsetHeight]
+    
+    const margin = {left:50, right:50, top:40, bottom: 40}
+    const gapHeight = 30
+
+    const [movementGraphWidth, movementGraphHeight] = [containerWidth - margin.left - margin.right , (containerHeight / 2) - margin.top - gapHeight /2]
+    const [feelingGraphWidth, feelingGraphHeight] = [containerWidth - margin.left - margin.right , (containerHeight / 2) - margin.bottom - gapHeight /2]
+
+    console.log(pamData)    
+
+    // create svg
+    const svg = d3.select('#graph-container').append('svg')
+        .attr('height', containerHeight)
+        .attr('width', containerWidth)
+        .attr('id', 'movement-graph')
+
+    createMovementGraph(svg, pamData, movementGraphWidth, movementGraphHeight, margin)
+    createFeelingGraph(svg, dailyData, feelingGraphWidth, feelingGraphHeight, movementGraphHeight, gapHeight,  margin)
+}
+
+function createMovementGraph(svg, pamData, graphWidth, graphHeight, margin) {
+    const x = d3.scaleBand()
+        .domain(pamData.map(d => new Date(d.date)))
+        .range([0, graphWidth])
+        .paddingInner(0.2)
+        .paddingOuter(0.2)
+
+    const y = d3.scaleLinear()
+        .domain([0, 400])
+        .range([graphHeight, 0])
+
+    const xAxis = d3.axisBottom(x).ticks(7)
+    const yAxis = d3.axisLeft(y).ticks(9).tickPadding(10).tickSize(2)
+
+    const chartGroup = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
+
+    chartGroup.append('g')
+        .attr('class','axis y')
+        .call(yAxis)
+
+    chartGroup.append('g')
+        .attr('class','axis x')
+        .attr('transform', `translate(0, ${graphHeight})`)
+        .call(xAxis)
+
+    chartGroup.selectAll('.bar-light')
+        .data(pamData)
+        .enter().append('rect')
+        .attr('class', 'bar-light')
+        .style('fill', '#ffeebf')
+        .attr('x', function(d) { return x(new Date(d.date)) })
+        .attr('width', x.bandwidth())
+        .attr('y', function(d) { return y(d.light_activity) })
+        .attr('height', function(d) { return graphHeight - y(d.light_activity) })
+
+    chartGroup.selectAll('.bar-medium')
+        .data(pamData)
+        .enter().append('rect')
+        .attr('class', 'bar-medium')
+        .style('fill', '#ffd970')
+        .attr('x', function(d) { return x(new Date(d.date)) })
+        .attr('width', x.bandwidth())
+        .attr('y', function(d) { return y(d.medium_activity + d.light_activity) })
+        .attr('height', function(d) { return graphHeight - y(d.medium_activity) })
+
+    chartGroup.selectAll('.bar-heavy')
+        .data(pamData)
+        .enter().append('rect')
+        .attr('class', 'bar-heavy')
+        .style('fill', '#ffbb00')
+        .attr('x', function(d) { return x(new Date(d.date)) })
+        .attr('width', x.bandwidth())
+        .attr('y', function(d) { return y(d.heavy_activity + d.medium_activity + d.light_activity) })
+        .attr('height', function(d) { return graphHeight - y(d.heavy_activity) })
+}
+
+
+function createFeelingGraph(svg, dailyData, graphWidth, graphHeight, upperGraphHeight, gapHeight, margin) {
+    console.log(dailyData)
+    
+    const x = d3.scaleBand()
+        .domain(dailyData.map(d => new Date(d.date)))
+        .range([0, graphWidth])
+        .paddingInner(0.2)
+        .paddingOuter(0.2)
+
+    const y = d3.scaleLinear()
+        .domain([0, 10])
+        .range([graphHeight, 0])
+
+    const xAxis = d3.axisBottom(x).ticks(7)
+    const yAxis = d3.axisLeft(y).ticks(9).tickPadding(10).tickSize(2)
+
+    const chartGroup = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top + upperGraphHeight + gapHeight})`)
+
+    chartGroup.append('g')
+        .attr('class','axis y')
+        .call(yAxis)
+
+    chartGroup.append('g')
+        .attr('class','axis x')
+        .attr('transform', `translate(0, ${graphHeight})`)
+        .call(xAxis)
+
+    chartGroup.selectAll('.bar-morning')
+        .data(dailyData)
+        .enter().append('rect')
+        .attr('class', 'bar-morning')
+        .style('fill', '#ffeebf')
+        .attr('x', function(d) { return x(new Date(d.date)) })
+        .attr('width', x.bandwidth())
+        .attr('y', function(d) { return y(d.morningfeel) })
+        .attr('height', function(d) { return graphHeight - y(d.morningfeel) })
+}
+
+
+function updateMovementGraph(pamData) {
+    console.log(pamData)    
+}
+
+// MAIN FUNCTIONS
 async function getData() {
     const baseUrl = window.location.protocol + '//' + window.location.host
     const endpoint = '/data/movement/'
@@ -7,92 +152,6 @@ async function getData() {
     const json = await response.json()    
     return json.data
 }
-
-getData().then(data => {
-    const startDate = new Date(data.user[0].startdate)    
-    const pamDataForWeek = filterForWeek(data.pamData, startDate, 6)
-    const dailyDataForWeek = filterForWeek(data.daily, startDate, 6)
-    console.log(pamDataForWeek)
-    console.log(dailyDataForWeek)    
-})
-
-const graphContainer = document.getElementById('graph-container')
-const containerWidth = graphContainer.offsetWidth
-const containerHeight = graphContainer.offsetHeight
-
-const svg = d3.select('#graph-container').append('svg')
-    .attr('id', 'movement-graph')
-    .append('g')
-    
-const x = d3.scaleBand()
-    .range([0, containerWidth])
-    .padding(0.1)
-const y = d3.scaleLinear()
-    .range([containerHeight, 0])
-
-
-
-// fetch(baseUrl + '/pamdata/PA043F3')
-//     .then(res => res.json())
-//     .then(json => {
-//         console.log(json)        
-//         const data = {
-//             firstWeek: json.data.dailyData.slice(0, 7),
-//             goalweek1: json.data.trophyData.goalweek2 / 7
-//         }
-//         console.log(data)
-
-//         function getColor(count) {
-//             if(count > data.goalweek1) {
-//                 return 'green'
-//             } else if(count + (data.goalweek1 / 10) > data.goalweek1) {
-//                 return 'yellow'
-//             } else {
-//                 return 'red'
-//             }
-//         }
-
-//         // Scale the range of the data in the domains
-//         x.domain(data.firstWeek.map((d) => { return d.date }))
-//         y.domain([0, d3.max(data.firstWeek, (d) => { return d.totaalpunten })])
-
-//         // append the rectangles for the bar chart
-//         svg.selectAll('.bar')
-//             .data(data.firstWeek)
-//             .enter().append('rect')
-//             .attr('class', 'bar')
-//             .attr('x', function(d) { return x(d.date) })
-//             .attr('width', x.bandwidth())
-//             .attr('y', function(d) { return y(d.totaalpunten) })
-//             .attr('height', function(d) { return containerHeight - y(d.totaalpunten) })
-//             .style('fill', (d) => getColor(d.totaalpunten))
-
-//         // add the x Axis
-//         svg.append('g')
-//             .attr('transform', 'translate(0,' + containerHeight + ')')
-//             .call(d3.axisBottom(x))
-//             .selectAll('text')
-//             .style('text-anchor', 'end')
-//             .attr('dx', '-.8em')
-//             .attr('dy', '.15em')
-//             .attr('transform', 'rotate(-65)')
-
-//         // add the y Axis
-//         svg.append('g')
-//             .call(d3.axisLeft(y))
-
-//         // add the goal line
-//         svg.append('line')
-//             .attr('class', 'goal')
-//             .attr('x1', 0)
-//             .attr('x2', containerWidth)
-//             .attr('y1', y(data.goalweek1))
-//             .attr('y2', y(data.goalweek1))
-//             .attr('stroke-width', 1)
-//             .attr('stroke-dasharray', '10,10')
-//             .attr('stroke', 'black')
-//     })
-
 
 // HELPER FUNCTIONS
 function filterForWeek(data, startDate, weekNumber) {

@@ -35,16 +35,13 @@ router.get('/all/:userid', async function(req, res) {
 })
 
 // route for data for movement graph
-router.get('/movement/:userid/:week', async function(req, res) {
-  
-    console.log(req.params.week)
-
+router.get('/movement/:userid', async function(req, res) {
+    const userData = await Data.getUserData(req.params.userid)
     const dailyDataForUser = await Data.getDailyDataForUser(req.params.userid)
     const pamDataForUser = await Data.getPamDataForUser(req.params.userid)
 
-    // add code to just send data for requested week
-
     const transformedData = {
+        user: userData,
         daily: dailyDataForUser,
         pamData: pamDataForUser
     }

@@ -40,7 +40,7 @@ const Data = {
             dailyData: dailyData
         }
         return combinedData
-    }
+    },
 }
 
 module.exports = Data

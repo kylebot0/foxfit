@@ -48,7 +48,8 @@ getData().then(data => {
         const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
         const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
 
-        updateFeelingGraph(pamDataForWeek, dailyDataForWeek, averageFeel)
+        createGraphs(pamDataForWeek, dailyDataForWeek, averageFeel)
+        // updateFeelingGraph(pamDataForWeek, dailyDataForWeek, averageFeel)
     })
 })
 

@@ -6,3 +6,9 @@ text {
   font-family: 'Open Sans', sans-serif;
   font-size: 1.5em;
 }
+
+.container-select {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}

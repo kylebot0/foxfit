@@ -157,6 +157,46 @@ fetch(baseUrl + '/pamdata/PA043F3')
             isThereAChart = true
         }
 
+        function makeLegend(subGroups) {
+            const colors = d3.scaleOrdinal()
+                .domain(subGroups)
+                .range(['#1AC6D0', '#15989F', '#382183'])
+
+            const legend = svg.append('g')
+                .attr('class', 'legend')
+                .attr('transform', 'translate('+(width / 2.55)+', -150)');
+
+            legend.selectAll('rect')
+                .data(subGroups)
+                .enter()
+                .append('rect')
+                .attr('y', 0)
+                .attr('x', function (d, i) {
+                    return i * 200;
+                })
+                .attr('width', 12)
+                .attr('height', 12)
+                .attr('fill', function (d, i) {
+                    return colors(i);
+                });
+
+            legend.selectAll('text')
+                .data(subGroups)
+                .enter()
+                .append('text')
+                .text(function (d) {
+                    let text = capitalizeFirstLetter(d) + ' activity'
+                    return text;
+                })
+                .attr('y', 25)
+                .attr('x', function (d, i) {
+                    return (i * 200) - 50;
+                })
+                .attr('text-anchor', 'start')
+                .attr('alignment-baseline', 'hanging');
+        }
+
+
         function makeChart(val) {
             let subGroups = getSubGroup(val)
             let newData = getStackedData(subGroups, val)
@@ -165,6 +205,7 @@ fetch(baseUrl + '/pamdata/PA043F3')
                 return item.total
             }))
             makeBars(subGroups, newData, maxValue, groups)
+            makeLegend(subGroups)
         }
         // =========================================
         // =============Update======================
@@ -196,3 +237,7 @@ function getDay(d) {
     let day = days[date.getDay()]
     return day
 }
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }

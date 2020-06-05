@@ -3,9 +3,7 @@
 // SETTINGS
 const settings = {
     container: {
-        getElement: () => document.getElementById('graph-container'),
-        getWidth: () => settings.container.getElement().offsetWidth,
-        getHeight: () => settings.container.getElement().offsetHeight
+        id: 'graph-container',
     },
     margins: {
         left:50,
@@ -18,16 +16,17 @@ const settings = {
 
 const getters = {
     container: {
-        getWidth: () => settings.container.getElement().offsetWidth,
-        getHeight: () => settings.container.getElement().offsetHeight
+        getElement: () => document.getElementById(settings.container.id),
+        getWidth: () => getters.container.getElement().offsetWidth,
+        getHeight: () => getters.container.getElement().offsetHeight
     },
     movementGraph: {
-        getWidth: () => settings.container.getWidth() - settings.margins.left - settings.margins.right,
-        getHeight: () => (settings.container.getHeight() / 2) - settings.margins.top - settings.spaceBetweenGraphs / 2
+        getWidth: () => getters.container.getWidth() - settings.margins.left - settings.margins.right,
+        getHeight: () => (getters.container.getHeight() / 2) - settings.margins.top - settings.spaceBetweenGraphs / 2
     },
     feelingGraph: {
-        getWidth: () => settings.container.getWidth() - settings.margins.left - settings.margins.right,
-        getHeight: () => (settings.container.getHeight() / 2) - settings.margins.bottom - settings.spaceBetweenGraphs /2
+        getWidth: () => getters.container.getWidth() - settings.margins.left - settings.margins.right,
+        getHeight: () => (getters.container.getHeight() / 2) - settings.margins.bottom - settings.spaceBetweenGraphs /2
     }
 }
 
@@ -57,7 +56,7 @@ getData().then(data => {
 
 function createGraphs(pamData, dailyData, averageFeel) {
     // clear container (remove when update function is finished)
-    settings.container.getElement().innerHTML = ''
+    getters.container.getElement().innerHTML = ''
 
     // graph size dynamics
     

@@ -13,77 +13,133 @@ const y = d3.scaleLinear()
 // append the svg object to the body of the page
 // append a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
-const svg = d3.select('body').append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom)
-    .append('g')
-    .attr('transform', 
-        'translate(' + margin.left + ',' + margin.top + ')')
+const svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+
 // get url + fetch to get data
-const getUrl = window.location
-const baseUrl = getUrl .protocol + '//' + getUrl.host
-fetch(baseUrl + '/pamdata/PA043F3')
-    .then(res => res.json())
-    .then(res => {
-        const data = {
-            firstWeek: res.data.dailyData.slice(0, 7),
-            goalweek1: res.data.trophyData.goalweek2 / 7
-        }
-        console.log(data)
-
-        function getColor(count) {
-            if(count > data.goalweek1) {
-                return 'green'
-            } else if(count + (data.goalweek1 / 10) > data.goalweek1) {
-                return 'yellow'
-            } else {
-                return 'red'
+let allData;
+async function fetchData() {
+    const getUrl = window.location;
+    const baseUrl = getUrl .protocol + "//" + getUrl.host
+    return await fetch(baseUrl + '/pamdata/PA043F3')
+        .then(res => res.json())
+        .then(res => {
+            allData = res
+            const data = {
+                curweek: res.data.dailyData.slice(0, 7),
+                curweekgoal: res.data.trophyData.goalweek1 / 7
             }
-        }
+            return data
+        })
+}
 
-        // Scale the range of the data in the domains
-        x.domain(data.firstWeek.map((d) => { return d.date }))
-        y.domain([0, d3.max(data.firstWeek, (d) => { return d.totaalpunten })])
+function getColor(count, data) {
+    if(count >= data.curweekgoal) {
+        return 'green'
+    } else if(count + (data.curweekgoal / 10) > data.curweekgoal) {
+        return 'yellow'
+    } else {
+        return 'red'
+    }
+}
 
-        // append the rectangles for the bar chart
-        svg.selectAll('.bar')
-            .data(data.firstWeek)
-            .enter().append('rect')
-            .attr('class', 'bar')
-            .attr('x', function(d) { return x(d.date) })
-            .attr('width', x.bandwidth())
-            .attr('y', function(d) { return y(d.totaalpunten) })
-            .attr('height', function(d) { return height - y(d.totaalpunten) })
-            .style('fill', (d) => getColor(d.totaalpunten))
+function createChart(data) {
+    // Scale the range of the data in the domains
+    x.domain(data.curweek.map((d) => { return d.date; }));
+    y.domain([0, d3.max(data.curweek, (d) => { return d.totaalpunten; })]);
 
-        // add the x Axis
-        svg.append('g')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(d3.axisBottom(x))
-            .selectAll('text')
-            .style('text-anchor', 'end')
-            .attr('dx', '-.8em')
-            .attr('dy', '.15em')
-            .attr('transform', 'rotate(-65)')
+    // append the rectangles for the bar chart
+    svg.selectAll(".bar")
+    .data(data.curweek)
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d) { return x(d.date); })
+    .attr("width", x.bandwidth())
+    .attr("y", function(d) { return y(d.totaalpunten); })
+    .attr("height", function(d) { return height - y(d.totaalpunten); })
+    .style("fill", (d) => getColor(d.totaalpunten, data))
 
-        // add the y Axis
-        svg.append('g')
-            .call(d3.axisLeft(y))
+    // add the x Axis
+    svg.append("g")
+    .attr("class", "x-axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll('text')
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
 
-        // add the goal line
-        svg.append('line')
-            .attr('class', 'goal')
-            .attr('x1', 0)
-            .attr('x2', width)
-            .attr('y1', y(data.goalweek1))
-            .attr('y2', y(data.goalweek1))
-            .attr('stroke-width', 1)
-            .attr('stroke-dasharray', '10,10')
-            .attr('stroke', 'black')
-    })
+    // add the y Axis
+    svg.append("g")
+    .attr("class", "y-axis")
+    .call(d3.axisLeft(y));
 
+     // add the goal line
+     svg.append("line")
+     .attr("class", "goal")
+     .attr('x1', 0)
+     .attr('x2', width)
+     .attr('y1', y(data.curweekgoal))
+     .attr('y2', y(data.curweekgoal))
+     .attr('stroke-width', 1)
+     .attr('stroke-dasharray', '10,10')
+     .attr('stroke', 'black')
+    }
+
+
+async function plotData() {
+    const data = await fetchData()
+    createChart(data)
+    console.log(data)
+}
        
+plotData()
 
+const selector = document.querySelector('select')
+selector.addEventListener('change', () => {
+    const selectedValue = selector.options[selector.selectedIndex].value
+    const goalweek = 'goalweek' + selectedValue
+    const data = {
+        curweek: allData.data.dailyData.slice((selectedValue -1) * 7,selectedValue * 7),
+        curweekgoal: allData.data.trophyData[goalweek] / 7
+    }
+    updateChart(data)
+})
 
+function updateChart(data) {
+    x.domain(data.curweek.map((d) => { return d.date; }));
+    y.domain([0, d3.max(data.curweek, (d) => { return d.totaalpunten; })]);
+
+    svg.selectAll(".bar")
+    .data(data.curweek) 
+    .transition()
+    .duration(300)
+    .attr("y", function(d) { return y(d.totaalpunten); })
+    .attr("height", function(d) { return height - y(d.totaalpunten); })
+    .style("fill", (d) => getColor(d.totaalpunten, data))   
+
+    svg.selectAll(".goal")
+    .transition()
+    .duration(300)
+    .attr('y1', y(data.curweekgoal))
+    .attr('y2', y(data.curweekgoal))
+
+    svg.selectAll(".y-axis")
+    .call(d3.axisLeft(y))
+
+    svg.selectAll(".x-axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll('text')
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
+}
 
 

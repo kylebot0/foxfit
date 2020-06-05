@@ -12,3 +12,16 @@ text {
   display: flex;
   justify-content: center;
 }
+
+#weeks {
+  padding: 1.5em;
+}
+
+.inactive {
+  transition: all 300ms;
+  fill: #d3d3d3;
+}
+body{
+  padding:0;
+  margin: 0;
+}

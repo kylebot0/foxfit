@@ -2,3 +2,26 @@ body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+text {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.5em;
+}
+
+.container-select {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#weeks {
+  padding: 1.5em;
+}
+
+.inactive {
+  transition: all 300ms;
+  fill: #d3d3d3;
+}
+body{
+  padding:0;
+  margin: 0;
+}

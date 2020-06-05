@@ -4,7 +4,8 @@ const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 
-const indexRouter = require('./routes/index')
+const indexRouter = require('./routes/index');
+const zorgverlenerRouter = require('./routes/zorgverlener');
 const dataRouter = require('./routes/data')
 const dayGoalRouter = require('./routes/daygoal')
 const movementRouter = require('./routes/movement')
@@ -21,7 +22,8 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/', indexRouter)
+app.use('/', indexRouter);
+app.use('/zorgverlener', zorgverlenerRouter);
 app.use('/data', dataRouter)
 app.use('/dagdoel', dayGoalRouter)
 app.use('/beweging', movementRouter)

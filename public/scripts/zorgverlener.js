@@ -49,6 +49,7 @@ function transformData(rawData) {
             })
             count = count + 1
             week = []
+            week.push(activity)
             return
         } else {
             week.push(activity)
@@ -146,7 +147,7 @@ function makeBars(subGroups, newData, maxValue, groups) {
         .data(newData)
         .enter().append("g")
 
-    console.log(bars)
+    // console.log(bars)
 
     bars
         .attr("fill", function (d) {
@@ -183,7 +184,7 @@ function makeBars(subGroups, newData, maxValue, groups) {
     isThereAChart = true
 }
 
-function makeLegend(subGroups) {
+function makeLegend(subGroups, val) {
     const colors = d3.scaleOrdinal()
         .domain(subGroups)
         .range(['#1AC6D0', '#15989F', '#382183'])
@@ -228,7 +229,7 @@ function makeLegend(subGroups) {
     legend.selectAll('rect')
         .on('click', function (d) {
             let thisRect = this;
-            onClick(thisRect)
+            onClick(thisRect, val)
         })
 }
 
@@ -244,7 +245,7 @@ function makeChart(val, data) {
     if (isThereALegend) {
         return
     } else {
-        makeLegend(subGroups)
+        makeLegend(subGroups, val)
         isThereALegend = true
     }
 }
@@ -316,9 +317,9 @@ function onClick(thisRect) {
             .duration(350)
             .attr('class', 'inactive')
 
-        d3.select('.' + rect.attr('id')).selectAll('.bar')
+        d3.select('.' + rect.attr('id'))
+        .selectAll('.bar')
             .attr('width', '0')
-            .attr('')
 
 
     } else {

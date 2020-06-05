@@ -5,7 +5,7 @@ const Utilities = {
 
         startDate.setDate(startDate.getDate() - 7)
         endDate.setDate(endDate.getDate() + 42)
-  
+
         function formatDate(date) {
             const day = date.getDate()
             const month = date.getMonth() + 1
@@ -13,7 +13,7 @@ const Utilities = {
             return `${year}-${month}-${day}`
         }
         return [formatDate(startDate), formatDate(endDate)]
-    }
+    },
 }
 
 module.exports = Utilities

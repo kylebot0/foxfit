@@ -1,0 +1,40 @@
+body {
+  background-color: rgb(43, 116, 122);
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0
+}
+
+h1, label {
+  margin: 2rem 1rem 2rem 2rem
+}
+
+#graph-container {
+  width: calc(100vw - 10rem);
+  height: 80vh;
+  margin: 1rem 5rem;
+  box-sizing: border-box;
+}
+#movement-graph {
+  background: linear-gradient(#DEF5F7 50%, rgb(237, 250, 252) 50%);
+  border-radius: 10px;
+}
+
+.axis line, .axis .domain {
+  stroke: #9DD3CF;
+  stroke-width: 2;
+}
+
+.bar-divider {
+  stroke: #9DD3CF;
+  stroke-width: 2;
+  stroke-dasharray: none;
+}
+
+text {
+  fill: rgb(19, 95, 89);
+}
+
+.feel-axis-y .tick:last-child, .feel-axis-y .tick:nth-last-child(2) {
+  display: none;
+}

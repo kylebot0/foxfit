@@ -1,14 +1,14 @@
 // set the dimensions and margins of the graph
 const margin = {top: 20, right: 20, bottom: 150, left: 40},
     width = 960 - margin.left - margin.right,
-    height = 650 - margin.top - margin.bottom;
+    height = 650 - margin.top - margin.bottom
 
 // set the ranges
 const x = d3.scaleBand()
-          .range([0, width])
-          .padding(0.1);
+    .range([0, width])
+    .padding(0.1)
 const y = d3.scaleLinear()
-          .range([height, 0]);
+    .range([height, 0])
           
 // append the svg object to the body of the page
 // append a 'group' element to 'svg'
@@ -48,8 +48,6 @@ function getColor(count, data) {
 }
 
 function createChart(data) {
-    
-
     // Scale the range of the data in the domains
     x.domain(data.curweek.map((d) => { return d.date; }));
     y.domain([0, d3.max(data.curweek, (d) => { return d.totaalpunten; })]);

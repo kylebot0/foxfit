@@ -93,6 +93,20 @@ header nav ul .about-button {
   color: var(--c-white);
 }
 
+
+header nav ul .about-button-active {
+  background-color: var(--c-blue);
+  color: white;
+  cursor: default;
+  font-weight: var(--font-size-bold);
+  border: 1px solid white;
+}
+
+header nav ul .about-button-active:hover {
+  background-color: var(--c-blue);
+  cursor: default;
+}
+
 .logo {
   height: 6rem;
   position: relative;

@@ -1,269 +1,350 @@
-/* eslint-disable no-undef */
+const margin = {
+        top: 200,
+        right: 200,
+        bottom: 150,
+        left: 200
+    },
+    width = window.innerWidth - margin.left - margin.right,
+    height = 1250 - margin.top - margin.bottom
 
-// SETTINGS
-const settings = {
-    container: {
-        id: 'graph-container',
-    },
-    margins: {
-        left:50,
-        right:50,
-        top:40,
-        bottom: 40
-    },
-    spaceBetweenGraphs: 0
+let isThereAChart = false
+let isThereALegend = false
+
+const svg = d3.select('body').append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform',
+        'translate(' + margin.left + ',' + margin.top + ')')
+
+
+// =======================GET DATA================================
+const getUrl = window.location
+const baseUrl = getUrl.protocol + '//' + getUrl.host
+async function getData() {
+    const baseUrl = window.location.protocol + '//' + window.location.host
+    const endpoint = '/data/all/'
+    const userID = 'PA043F3'
+    const response = await fetch(`${baseUrl}${endpoint}${userID}`)
+    const json = await response.json()
+    return json
 }
 
-const getters = {
-    container: {
-        getElement: () => document.getElementById(settings.container.id),
-        getWidth: () => getters.container.getElement().offsetWidth,
-        getHeight: () => getters.container.getElement().offsetHeight
-    },
-    movementGraph: {
-        getWidth: () => getters.container.getWidth() - settings.margins.left - settings.margins.right,
-        getHeight: () => (getters.container.getHeight() / 2) - settings.margins.top - settings.spaceBetweenGraphs / 2
-    },
-    feelingGraph: {
-        getWidth: () => getters.container.getWidth() - settings.margins.left - settings.margins.right,
-        getHeight: () => (getters.container.getHeight() / 2) - settings.margins.bottom - settings.spaceBetweenGraphs /2
+function transformData(rawData) {
+    const data = []
+    let week = []
+    let count = 1
+    rawData.data.pamData.forEach((item, i) => {
+        let activity = {
+            date: item.date,
+            total: (item.light_activity + item.medium_activity + item.heavy_activity),
+            light: item.light_activity,
+            medium: item.medium_activity,
+            heavy: item.heavy_activity
+        }
+        if (week.length >= 7) {
+            data.push({
+                week: count,
+                group: week
+            })
+            count = count + 1
+            week = []
+            week.push(activity)
+            return
+        } else {
+            week.push(activity)
+        }
+    })
+    return data
+}
+// =========================================
+// =============Select option===============
+// =========================================
+init()
+
+async function init(){
+    let rawData = await getData()
+    let transformedData = transformData(rawData)
+    bindSelect(transformedData)
+}
+
+function bindSelect(data){
+    data.forEach((item) => {
+        let option = 'Week ' + item.week
+        let markup = `<option value="${item.week}">${option}</option>`
+        let select = document.querySelector('select')
+        select.insertAdjacentHTML('beforeend', markup)
+    })
+
+    makeChart(1, data)
+
+    d3.select('select').on('change', function (d) {
+        let val = d3.select('option:checked').node().value
+        d3.selectAll('.bar').transition().duration(1000).attr('width', '0').on('end', crt)
+        function crt(){
+            d3.selectAll('.bar').remove()
+            d3.selectAll('.tick').remove()
+            makeChart(val, data)
+        }
+        
+        // update(val, data)
+    })
+}
+
+
+// =========================================
+// =============Bar chart===================
+// =========================================
+
+function getSubGroup(val, data) {
+    const subgroups = Object.keys({
+        light: data[val].light_activity,
+        medium: data[val].medium_activity,
+        heavy: data[val].heavy_activity
+    })
+    return subgroups
+}
+
+function getStackedData(subgroups, val, data) {
+    const stackedData = d3.stack()
+        .keys(subgroups)
+        (data[val].group)
+    return stackedData
+}
+
+function getGroup(val, data) {
+    const groups = d3.map(data[val].group, (d) => {
+        return (d.date)
+    }).keys()
+    return groups
+}
+
+function makeBars(subGroups, newData, maxValue, groups) {
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([0, width]);
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x))
+
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+    svg.append("g")
+        .call(d3.axisLeft(y).tickFormat((d) => {
+            return getDay(d)
+        }))
+
+    const color = d3.scaleOrdinal()
+        .domain(subGroups)
+        .range(['#1AC6D0', '#15989F', '#382183'])
+
+
+
+    let bars = svg.append("g")
+        .selectAll("g")
+        .data(newData)
+        .enter().append("g")
+
+    // console.log(bars)
+
+    bars
+        .attr("fill", function (d) {
+            return color(d.key);
+        })
+        .attr('class', (d) => {
+            return d.key + ' chart'
+        })
+        .selectAll("rect")
+        .data(function (d) {
+            return d;
+        })
+        .enter().append("rect")
+        .attr('class', (d) => {
+            return 'bar'
+        })
+        .attr("x", (d) => {
+            return x(d[0])
+        })
+        .attr("y", function (d) {
+            return y(d.data.date);
+        })
+        .attr('width', '0')
+        .transition()
+        .duration(1000)
+        .attr("width", function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x1 - x2)
+            return coords;
+        })
+        .attr("height", (y.bandwidth() - 50))
+
+    isThereAChart = true
+}
+
+function makeLegend(subGroups, val) {
+    const colors = d3.scaleOrdinal()
+        .domain(subGroups)
+        .range(['#1AC6D0', '#15989F', '#382183'])
+
+    const legend = d3.select('svg').append('g')
+        .attr('class', 'legend')
+        .attr('transform', 'translate(' + (width / 2) + ', 100)');
+
+    legend.selectAll('rect')
+        .data(subGroups)
+        .enter()
+        .append('rect')
+        .attr('id', (d) => {
+            return d
+        })
+        .attr('class', 'active')
+        .attr('y', 0)
+        .attr('x', (d, i) => {
+            return i * 200;
+        })
+        .attr('width', 20)
+        .attr('height', 20)
+        .attr('fill', (d, i) => {
+            return colors(i);
+        });
+
+    legend.selectAll('text')
+        .data(subGroups)
+        .enter()
+        .append('text')
+        .text((d) => {
+            let text = capitalizeFirstLetter(d) + ' activity'
+            return text;
+        })
+        .attr('y', 25)
+        .attr('x', (d, i) => {
+            return (i * 200) - 50;
+        })
+        .attr('text-anchor', 'start')
+        .attr('alignment-baseline', 'hanging');
+
+    legend.selectAll('rect')
+        .on('click', function (d) {
+            let thisRect = this;
+            onClick(thisRect, val)
+        })
+}
+
+
+function makeChart(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
+    let maxValue = maxVal(data[val].group.map((item) => {
+        return item.total
+    }))
+    makeBars(subGroups, newData, maxValue, groups)
+    if (isThereALegend) {
+        return
+    } else {
+        makeLegend(subGroups, val)
+        isThereALegend = true
+    }
+}
+// =========================================
+// =============Update======================
+// =========================================
+function update(val, data) {
+    d3.selectAll('.bar').transition().duration(1000).attr('width', '0').on('end', updateChart)
+
+    function updateChart() {
+        // d3.selectAll('.bar').remove()
+        // d3.selectAll('.tick').remove()
+        // makeChart(val)
+        let subGroups = getSubGroup(val, data)
+        let newData = getStackedData(subGroups, val, data)
+        let groups = getGroup(val, data)
+
+        const x = d3.scaleLinear()
+            .domain([0, 400])
+            .nice()
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+
+        const y = d3.scaleBand()
+            .range([0, height])
+            .domain(groups)
+        svg.append("g")
+            .call(d3.axisLeft(y).tickFormat((d) => {
+                return getDay(d)
+            }))
+
+        let bars = svg.append("g")
+            .selectAll("g")
+            .data(newData)
+            .enter().append("g")
+
+        bars
+            .data(function (d) {
+                console.log(d)
+                return d
+            })
+            .enter()
+            .attr("x", (d) => {
+                return x(d[0])
+            })
+            .attr("y", function (d) {
+                return y(d.data.date);
+            })
+            .attr("width", function (d) {
+                let x1 = x(d[1])
+                let x2 = x(d[0])
+                let coords = (x1 - x2)
+                return coords;
+            })
+            .attr("height", (y.bandwidth() - 50))
+
+    }
+
+}
+
+function onClick(thisRect) {
+    let rect = d3.select(thisRect)
+    console.log(rect.attr('id'))
+    if (rect.attr('class') == 'active') {
+        rect
+            .transition()
+            .duration(350)
+            .attr('class', 'inactive')
+
+        d3.select('.' + rect.attr('id'))
+        .selectAll('.bar')
+            .attr('width', '0')
+
+
+    } else {
+        rect
+            .transition()
+            .duration(350)
+            .attr('class', 'active')
+
     }
 }
 
-
-// EXECUTED FUNCTIONS
-
-getData().then(data => {
-    const weekSelectElement = document.getElementById('select-week')
-    const startDate = new Date(data.user[0].startdate)   
-    const selectedWeekNr = weekSelectElement.selectedIndex
-    const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
-    const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
-    const averageFeel = getAverageFeel(data.daily)
-
-    createGraphs(pamDataForWeek, dailyDataForWeek, averageFeel)
-
-    weekSelectElement.addEventListener('change', (event) => { 
-        const selectedWeekNr = event.target.selectedIndex
-        const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
-        const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
-
-        createGraphs(pamDataForWeek, dailyDataForWeek, averageFeel)
-        // updateFeelingGraph(pamDataForWeek, dailyDataForWeek, averageFeel)
-    })
-})
-
-// GRAPH FUNCTIONS
-
-function createGraphs(pamData, dailyData, averageFeel) {
-    // clear container (remove when update function is finished)
-    getters.container.getElement().innerHTML = ''
-
-    // graph size dynamics
-    
-    console.log(pamData)    
-
-    // create svg
-    const svg = d3.select('#graph-container').append('svg')
-        .attr('height', getters.container.getHeight())
-        .attr('width', getters.container.getWidth())
-        .attr('id', 'movement-graph')
-
-    createMovementGraph(svg, pamData)
-    createFeelingGraph(svg, dailyData, averageFeel)
+function maxVal(val) {
+    var max = val.reduce(function (a, b) {
+        return Math.max(a, b);
+    });
+    return max
 }
 
-function createMovementGraph(svg, pamData) {
-    
-    const x = d3.scaleBand()
-        .domain(pamData.map(d => new Date(d.date)))
-        .range([0, getters.movementGraph.getWidth()])
-        .paddingInner(0.2)
-        .paddingOuter(0.2)
-
-    const y = d3.scaleLinear()
-        .domain([0, 400])
-        .range([getters.movementGraph.getHeight(), 0])
-
-    const xAxis = d3.axisBottom(x).ticks(0).tickFormat('').tickSize(0)
-    const yAxis = d3.axisLeft(y).ticks(9).tickPadding(10).tickSize(2)
-
-    const chartGroup = svg.append('g').attr('transform', `translate(${settings.margins.left}, ${settings.margins.top})`)
-
-    chartGroup.append('g')
-        .attr('class','axis y')
-        .call(yAxis)
-
-    chartGroup.append('g')
-        .attr('class','axis x')
-        .attr('transform', `translate(0, ${getters.movementGraph.getHeight()})`)
-        .call(xAxis)
-
-    chartGroup.selectAll('.bar-light')
-        .data(pamData)
-        .enter().append('rect')
-        .attr('class', 'bar-light')
-        .style('fill', '#9DD3CF')
-        .attr('x', function(d) { return x(new Date(d.date)) })
-        .attr('width', x.bandwidth())
-        .attr('y', function(d) { return y(d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.light_activity) })
-
-    chartGroup.selectAll('.bar-medium')
-        .data(pamData)
-        .enter().append('rect')
-        .attr('class', 'bar-medium')
-        .style('fill', '#3CC3B8')
-        .attr('x', function(d) { return x(new Date(d.date)) })
-        .attr('width', x.bandwidth())
-        .attr('y', function(d) { return y(d.medium_activity + d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.medium_activity) })
-
-    chartGroup.selectAll('.bar-heavy')
-        .data(pamData)
-        .enter().append('rect')
-        .attr('class', 'bar-heavy')
-        .style('fill', '#249E93')
-        .attr('x', function(d) { return x(new Date(d.date)) })
-        .attr('width', x.bandwidth())
-        .attr('y', function(d) { return y(d.heavy_activity + d.medium_activity + d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.heavy_activity) })
+function getDay(d) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    let date = new Date(d)
+    let day = days[date.getDay()]
+    return day
 }
 
-
-function createFeelingGraph(svg, dailyData, averageFeel) {
-    console.log(dailyData)
-    const averageFeelForThisWeek = d3.mean(dailyData, (d) => { return d3.mean([d.morningfeel, d.eveningfeel], d => d < 0 ? 'not valid' : d ) })
-
-    const x = d3.scaleBand()
-        .domain(dailyData.map(d => new Date(d.date)))
-        .range([0, getters.feelingGraph.getWidth()])
-        .paddingInner(0.2)
-        .paddingOuter(0.2)
-
-    const y = d3.scaleLinear()
-        .domain([0, 12])
-        .range([getters.feelingGraph.getHeight(), 0])
-
-    const xAxis = d3.axisBottom(x).ticks(7).tickFormat(x => {
-        const formatTime = d3.timeFormat('%A')
-        return formatTime(x)
-    })
-    const yAxis = d3.axisLeft(y).ticks(9).tickPadding(10).tickSize(2)
-
-    const chartGroup = svg.append('g').attr('transform', `translate(${settings.margins.left}, ${settings.margins.top + getters.movementGraph.getHeight() + settings.spaceBetweenGraphs})`).attr('class', 'feel-graph')
-
-    chartGroup.append('g')
-        .attr('class','feel-axis-y axis y')
-        .call(yAxis)
-
-    chartGroup.append('g')
-        .attr('class','axis x')
-        .attr('transform', `translate(0, ${getters.feelingGraph.getHeight()})`)
-        .call(xAxis)
-        
-    chartGroup.selectAll('.bar-divider')
-        .data(dailyData)
-        .enter().append('line')
-        .attr('class', 'bar-divider')
-        .attr('x1', function(d) {
-            let currentDate = new Date(d.date)
-            currentDate.setDate(currentDate.getDate() + 1)
-            let newX = x(currentDate) - (x.paddingInner() * getters.feelingGraph.getWidth() / 14)
-            return newX > 0 ? newX : getters.feelingGraph.getWidth() - (x.paddingInner() * getters.feelingGraph.getWidth() / 14)
-        })
-        .attr('y1', 0)
-        .attr('x2', function(d) {
-            let currentDate = new Date(d.date)
-            currentDate.setDate(currentDate.getDate() + 1)
-            let newX = x(currentDate) - (x.paddingInner() * getters.feelingGraph.getWidth() / 14)
-            return newX > 0 ? newX : getters.feelingGraph.getWidth() - (x.paddingInner() * getters.feelingGraph.getWidth() / 14)
-        })
-        .attr('y2', getters.feelingGraph.getHeight())
-        .attr('stroke-width', 0.5)
-        .attr('stroke', '#197068')
-        .attr('stroke-dasharray', 4)
-
-    chartGroup.selectAll('.bar-morning')
-        .data(dailyData)
-        .enter().append('rect')
-        .attr('class', 'bar-morning')
-        .style('fill', d => d.morningfeel < 0 ? '#ededed' : '#9DD3CF')
-        .attr('x', function(d) { return x(new Date(d.date)) })
-        .attr('width', x.bandwidth() / 2)
-        .attr('y', function(d) { return y(d.morningfeel < 0 ? 10 : d.morningfeel) })
-        .attr('height', function(d) { return getters.feelingGraph.getHeight() - y(d.morningfeel < 0 ? 10 : d.morningfeel) })
-
-    chartGroup.selectAll('.bar-evening')
-        .data(dailyData)
-        .enter().append('rect')
-        .attr('class', 'bar-evening')
-        .style('fill', d => d.eveningfeel < 0 ? 'none' : '#249E93')
-        .attr('x', function(d) { return x(new Date(d.date)) + x.bandwidth() / 2 })
-        .attr('width', x.bandwidth() / 2)
-        .attr('y', function(d) { return y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
-        .attr('height', function(d) { return getters.feelingGraph.getHeight() - y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
-    
-    chartGroup.append('line')
-        .attr('class', 'baseline')
-        .attr('x1', 0)
-        .attr('y1', y(averageFeelForThisWeek))
-        .attr('x2', getters.feelingGraph.getWidth())
-        .attr('y2', y(averageFeelForThisWeek))
-        .attr('stroke-width', 1)
-        .attr('stroke', '#197068')
-
-    chartGroup.append('line')
-        .attr('class', 'total-average')
-        .attr('x1', 0)
-        .attr('y1', y(averageFeel))
-        .attr('x2', getters.feelingGraph.getWidth())
-        .attr('y2', y(averageFeel))
-        .attr('stroke-width', 1)
-        .attr('stroke', '#197068')
-        .attr('stroke-dasharray', 4)
-
-}
-
-
-function updateMovementGraph(pamData) {
-    console.log(pamData)    
-}
-
-// MAIN FUNCTIONS
-async function getData() {
-    const baseUrl = window.location.protocol + '//' + window.location.host
-    const endpoint = '/data/movement/'
-    const userID = 'PA043F3'
-    const response = await fetch(`${baseUrl}${endpoint}${userID}`)
-    const json = await response.json()    
-    return json.data
-}
-
-// HELPER FUNCTIONS
-function filterForWeek(data, startDate, weekNumber) {
-    const filteredData = data.filter((datapoint) => {
-        return isWithinSelectedWeek(datapoint, startDate, weekNumber)
-    })
-    return filteredData    
-}
-
-function getDayDifference(date1, date2) {
-    const diffTime = Math.abs(date1 - date2)
-    let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return date2 < date1 ? diffDays * -1 : diffDays
-}
-
-function getAverageFeel(data) {
-    return d3.mean(data, (d) => {
-        return d3.mean([d.morningfeel, d.eveningfeel], d => d < 0 ? 'not valid' : d )
-    })
-}
-
-// CHECKER FUNCTIONS
-function isWithinSelectedWeek(datapoint, startDate, weekNumber) {
-    const dateForDataPoint = new Date(datapoint.date)
-    const daysAway = getDayDifference(startDate, dateForDataPoint)
-    const withinWeek = daysAway <= 7 * weekNumber && daysAway > 7 * (weekNumber - 1)
-    return withinWeek ? true : false
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }

@@ -1,0 +1,25 @@
+<header>
+  <a href="http://simba.hipperacademy.nl/">
+    <img src="/images/foxfit_logo.png" alt="logo FoxFit" class="logo">
+  </a>
+  <h1>FoxFit Resultaten</h1>
+  <nav>
+    <ul>
+      <a href="/beweging">
+        <li <% if (title === 'Beweging') { %> class="active" <% } %>>Beweging</li>
+      </a>
+      <a href="/gevoel">
+        <li <% if (title === 'Gevoel en beweging') { %> class="active" <% } %>>Gevoel</li>
+      </a>
+      <a href="/dagdoelen">
+        <li <% if (title === 'Dagdoelen') { %> class="active" <% } %>>Scores</li>
+      </a>
+      <a href="/kinderen">
+        <li <% if (title === 'kinderen') { %> class="active" <% } %>>Voor de kinderen</li>
+      </a>
+      <a href="/">
+        <li class="about-button <% if (title === 'Resultaten') { %>active<% } %>">Over het kind</li>
+      </a>
+    </ul>
+  </nav>
+</header>

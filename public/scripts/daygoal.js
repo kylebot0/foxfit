@@ -13,7 +13,8 @@ const y = d3.scaleLinear()
 // append the svg object to the body of the page
 // append a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
-const svg = d3.select('body').append('svg')
+const svg = d3.select('#graph-container').append('svg')
+    .attr('class', 'graph')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')

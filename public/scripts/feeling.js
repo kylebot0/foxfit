@@ -67,7 +67,7 @@ function createGraphs(pamData, dailyData, averageFeel) {
     const svg = d3.select('#graph-container').append('svg')
         .attr('height', getters.container.getHeight())
         .attr('width', getters.container.getWidth())
-        .attr('id', 'movement-graph')
+        .attr('class', 'graph')
 
     createMovementGraph(svg, pamData)
     createFeelingGraph(svg, dailyData, averageFeel)

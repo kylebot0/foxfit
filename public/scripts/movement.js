@@ -11,6 +11,7 @@ let isThereAChart = false
 let isThereALegend = false
 
 const svg = d3.select('body').append('svg')
+    .attr('class', 'graph')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
@@ -123,15 +124,15 @@ function makeBars(subGroups, newData, maxValue, groups) {
     const x = d3.scaleLinear()
         .domain([0, 400])
         .nice()
-        .range([0, width]);
-    svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
+        .range([0, width])
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x))
 
     const y = d3.scaleBand()
         .range([0, height])
         .domain(groups)
-    svg.append("g")
+    svg.append('g')
         .call(d3.axisLeft(y).tickFormat((d) => {
             return getDay(d)
         }))
@@ -142,44 +143,44 @@ function makeBars(subGroups, newData, maxValue, groups) {
 
 
 
-    let bars = svg.append("g")
-        .selectAll("g")
+    let bars = svg.append('g')
+        .selectAll('g')
         .data(newData)
-        .enter().append("g")
+        .enter().append('g')
 
     // console.log(bars)
 
     bars
-        .attr("fill", function (d) {
-            return color(d.key);
+        .attr('fill', function (d) {
+            return color(d.key)
         })
         .attr('class', (d) => {
             return d.key + ' chart'
         })
-        .selectAll("rect")
+        .selectAll('rect')
         .data(function (d) {
-            return d;
+            return d
         })
-        .enter().append("rect")
+        .enter().append('rect')
         .attr('class', (d) => {
             return 'bar'
         })
-        .attr("x", (d) => {
+        .attr('x', (d) => {
             return x(d[0])
         })
-        .attr("y", function (d) {
-            return y(d.data.date);
+        .attr('y', function (d) {
+            return y(d.data.date)
         })
         .attr('width', '0')
         .transition()
         .duration(1000)
-        .attr("width", function (d) {
+        .attr('width', function (d) {
             let x1 = x(d[1])
             let x2 = x(d[0])
             let coords = (x1 - x2)
-            return coords;
+            return coords
         })
-        .attr("height", (y.bandwidth() - 50))
+        .attr('height', (y.bandwidth() - 50))
 
     isThereAChart = true
 }
@@ -191,7 +192,7 @@ function makeLegend(subGroups, val) {
 
     const legend = d3.select('svg').append('g')
         .attr('class', 'legend')
-        .attr('transform', 'translate(' + (width / 2) + ', 100)');
+        .attr('transform', 'translate(' + (width / 2) + ', 100)')
 
     legend.selectAll('rect')
         .data(subGroups)
@@ -203,13 +204,13 @@ function makeLegend(subGroups, val) {
         .attr('class', 'active')
         .attr('y', 0)
         .attr('x', (d, i) => {
-            return i * 200;
+            return i * 200
         })
         .attr('width', 20)
         .attr('height', 20)
         .attr('fill', (d, i) => {
-            return colors(i);
-        });
+            return colors(i)
+        })
 
     legend.selectAll('text')
         .data(subGroups)
@@ -217,18 +218,18 @@ function makeLegend(subGroups, val) {
         .append('text')
         .text((d) => {
             let text = capitalizeFirstLetter(d) + ' activity'
-            return text;
+            return text
         })
         .attr('y', 25)
         .attr('x', (d, i) => {
-            return (i * 200) - 50;
+            return (i * 200) - 50
         })
         .attr('text-anchor', 'start')
-        .attr('alignment-baseline', 'hanging');
+        .attr('alignment-baseline', 'hanging')
 
     legend.selectAll('rect')
         .on('click', function (d) {
-            let thisRect = this;
+            let thisRect = this
             onClick(thisRect, val)
         })
 }
@@ -266,23 +267,23 @@ function update(val, data) {
         const x = d3.scaleLinear()
             .domain([0, 400])
             .nice()
-            .range([0, width]);
-        svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
+            .range([0, width])
+        svg.append('g')
+            .attr('transform', 'translate(0,' + height + ')')
             .call(d3.axisBottom(x))
 
         const y = d3.scaleBand()
             .range([0, height])
             .domain(groups)
-        svg.append("g")
+        svg.append('g')
             .call(d3.axisLeft(y).tickFormat((d) => {
                 return getDay(d)
             }))
 
-        let bars = svg.append("g")
-            .selectAll("g")
+        let bars = svg.append('g')
+            .selectAll('g')
             .data(newData)
-            .enter().append("g")
+            .enter().append('g')
 
         bars
             .data(function (d) {
@@ -290,19 +291,19 @@ function update(val, data) {
                 return d
             })
             .enter()
-            .attr("x", (d) => {
+            .attr('x', (d) => {
                 return x(d[0])
             })
-            .attr("y", function (d) {
-                return y(d.data.date);
+            .attr('y', function (d) {
+                return y(d.data.date)
             })
-            .attr("width", function (d) {
+            .attr('width', function (d) {
                 let x1 = x(d[1])
                 let x2 = x(d[0])
                 let coords = (x1 - x2)
-                return coords;
+                return coords
             })
-            .attr("height", (y.bandwidth() - 50))
+            .attr('height', (y.bandwidth() - 50))
 
     }
 
@@ -318,7 +319,7 @@ function onClick(thisRect) {
             .attr('class', 'inactive')
 
         d3.select('.' + rect.attr('id'))
-        .selectAll('.bar')
+            .selectAll('.bar')
             .attr('width', '0')
 
 
@@ -333,18 +334,18 @@ function onClick(thisRect) {
 
 function maxVal(val) {
     var max = val.reduce(function (a, b) {
-        return Math.max(a, b);
-    });
+        return Math.max(a, b)
+    })
     return max
 }
 
 function getDay(d) {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     let date = new Date(d)
     let day = days[date.getDay()]
     return day
 }
 
 function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+    return string.charAt(0).toUpperCase() + string.slice(1)
 }

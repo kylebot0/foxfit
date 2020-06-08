@@ -4,7 +4,7 @@
   --font-size-regular: 400;
   --font-size-bold: 500;
   
-  --c-blue-dark: #249E93;
+  --c-blue-dark: rgb(43, 116, 122);
   --c-blue: #3CC3B8;
   --c-blue-light: #9DD3CF;
   --c-blue-lightest: #DEF5F7;
@@ -15,8 +15,9 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   padding:0;
   margin: 0;
-  background-color: var(--c-blue-lightest);
+  background-color: var(--c-blue-dark);
   font-family: var(--font-main);
+  color: white;
 }
 
 header {
@@ -55,16 +56,30 @@ header nav ul {
 header nav ul li {
   background-color: var(--c-white);
   padding: .5rem 1rem;
-  min-width: 8rem;
+  min-width: 10rem;
   display: flex;
   justify-content: center;
   transition: all .1s ease;
+  box-sizing: border-box;
+}
+
+header nav ul .active {
+  background-color: var(--c-blue);
+  color: white;
+  cursor: default;
+  font-weight: var(--font-size-bold);
+  border: 1px solid white;
 }
 
 header nav ul li:hover {
   background-color: var(--c-blue-dark);
   color: var(--c-white);
   font-weight: var(--font-size-bold);
+}
+
+header nav ul .active:hover {
+  background-color: var(--c-blue);
+  color: white;
 }
 
 header nav a {
@@ -118,4 +133,39 @@ text {
   .logo {
     top: 0;
   }
+}
+
+label {
+  margin: 2rem 1rem 2rem 2rem
+}
+
+#graph-container {
+  width: calc(100vw - 10rem);
+  height: 80vh;
+  margin: 1rem 5rem;
+  box-sizing: border-box;
+}
+
+.graph {
+  background: linear-gradient(#DEF5F7 50%, rgb(237, 250, 252) 50%);
+  border-radius: 10px;
+}
+
+.axis line, .axis .domain {
+  stroke: #9DD3CF;
+  stroke-width: 2;
+}
+
+.bar-divider {
+  stroke: #9DD3CF;
+  stroke-width: 2;
+  stroke-dasharray: none;
+}
+
+text {
+  fill: rgb(19, 95, 89);
+}
+
+.feel-axis-y .tick:last-child, .feel-axis-y .tick:nth-last-child(2) {
+  display: none;
 }

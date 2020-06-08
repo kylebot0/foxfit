@@ -6,19 +6,19 @@
   <nav>
     <ul>
       <a href="/beweging">
-        <li>Beweging</li>
+        <li <% if (title === 'Beweging') { %> class="active" <% } %>>Beweging</li>
       </a>
       <a href="/gevoel">
-        <li>Gevoel</li>
+        <li <% if (title === 'Gevoel en beweging') { %> class="active" <% } %>>Gevoel</li>
       </a>
       <a href="/dagdoelen">
-        <li>Scores</li>
+        <li <% if (title === 'Dagdoelen') { %> class="active" <% } %>>Scores</li>
       </a>
-      <a href="/beweging">
-        <li>Voor de kinderen</li>
+      <a href="/kinderen">
+        <li <% if (title === 'kinderen') { %> class="active" <% } %>>Voor de kinderen</li>
       </a>
-      <a href="/over">
-        <li class="about-button">Over het kind</li>
+      <a href="/">
+        <li class="about-button <% if (title === 'Resultaten') { %>active<% } %>">Over het kind</li>
       </a>
     </ul>
   </nav>

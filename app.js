@@ -9,6 +9,7 @@ const zorgverlenerRouter = require('./routes/zorgverlener');
 const dataRouter = require('./routes/data')
 const dayGoalRouter = require('./routes/daygoal')
 const movementRouter = require('./routes/movement')
+const planets = require('./routes/planets')
 
 const app = express()
 
@@ -27,6 +28,7 @@ app.use('/zorgverlener', zorgverlenerRouter);
 app.use('/data', dataRouter)
 app.use('/dagdoel', dayGoalRouter)
 app.use('/beweging', movementRouter)
+app.use('/planeten', planets)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

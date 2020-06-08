@@ -47,11 +47,8 @@ For detailed information on collaboration, visit [this wiki page](https://github
 
 ### Grid
 
-
 ### Bar chart
-Next to the filters i make a couple of bar charts, so that you can easily see how much every filters contains.
-Each bar is connected to the filter next to it, so if you click it fills itself with a lightgrey color. This way you can see if it's inactive or not.
-![preview](https://github.com/kylebot0/Project_thorikos/blob/master/gh-images/Schermafbeelding%202020-01-22%20om%2020.15.57.png)
+
 
 ### Too long to read
 - [x] Mapbox implementation

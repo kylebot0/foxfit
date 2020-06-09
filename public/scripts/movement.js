@@ -58,6 +58,16 @@ function transformData(rawData) {
     })
     return data
 }
+
+function filterData(data, id, val) {
+    const deepCopy = JSON.parse(JSON.stringify(data))
+    let week = deepCopy[val].group
+    week.forEach((d) => {
+        d[id] = 0
+        // delete d[id]
+    })
+    return deepCopy
+}
 // =========================================
 // =============Select option===============
 // =========================================
@@ -65,8 +75,17 @@ init()
 
 async function init() {
     let rawData = await getData()
-    let transformedData = transformData(rawData)
+    const transformedData = transformData(rawData)
     bindSelect(transformedData)
+    makeChart(0, transformedData)
+    toggleOptions(0, transformedData)
+    d3.select('select').on('change', function (d) {
+        let val = d3.select('option:checked').node().value
+        val = val - 1
+        update(val, transformedData)
+        toggleOptions(val, transformedData)
+    })
+
 }
 
 function bindSelect(data) {
@@ -75,20 +94,6 @@ function bindSelect(data) {
         let markup = `<option value="${item.week}">${option}</option>`
         let select = document.querySelector('select')
         select.insertAdjacentHTML('beforeend', markup)
-    })
-
-    makeChart(1, data)
-
-    d3.select('select').on('change', function (d) {
-        let val = d3.select('option:checked').node().value
-        // d3.selectAll('.bar').transition().duration(1000).attr('width', '0').on('end', crt)
-        // function crt(){
-        //     d3.selectAll('.bar').remove()
-        //     d3.selectAll('.tick').remove()
-        //     makeChart(val, data)
-        // }
-
-        update(val, data)
     })
 }
 
@@ -173,7 +178,7 @@ function makeBars(subGroups, newData, maxValue, groups) {
         })
         .attr('width', '0')
         .transition()
-        .duration(1000)
+        .duration(500)
         .attr('width', function (d) {
             let x1 = x(d[1])
             let x2 = x(d[0])
@@ -246,75 +251,75 @@ function makeChart(val, data) {
 
         isThereALegend = true
     }
-    toggleOptions(data)
-    console.log('f')
+
 }
 // =========================================
 // =============Update======================
 // =========================================
 function update(val, data) {
-        let subGroups = getSubGroup(val, data)
-        let newData = getStackedData(subGroups, val, data)
-        let groups = getGroup(val, data)
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
 
-        const x = d3.scaleLinear()
-            .domain([0, 400])
-            .nice()
-            .range([0, width])
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([0, width])
 
-        const y = d3.scaleBand()
-            .range([0, height])
-            .domain(groups)
-           
-            let bars = svg
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+
+    let bars = svg
         .selectAll('g.chart')
         .data(newData)
 
-        bars
-            .selectAll('rect')
-            .data(function (d) {
-                return d
-            })
-            .transition()
-            .duration(500)
-            .attr('x', (d) => {
-                return x(d[0])
-            })
-            .attr('y', function (d) {
-                return y(d.data.date)
-            })
-            .attr('width', function (d) {
-                let x1 = x(d[1])
-                let x2 = x(d[0])
-                let coords = (x1 - x2)
-                return coords
-            })
-            .attr('height', (y.bandwidth() - 50))
+    bars
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .transition()
+        .duration(500)
+        .attr('x', (d) => {
+            return x(d[0])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x1 - x2)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    // toggleOptions(val, data)
 }
 
-function toggleOptions(data) {
-    // console.log(legend.selectAll('rect'))
+function toggleOptions(val, data) {
+    let newData = []
     d3.select('.legend').selectAll('rect')
         .on('click', function (d) {
-            console.log(data)
             let rect = d3.select(this)
+            let id = rect.attr('id')
+
             if (rect.attr('class') == 'active') {
                 rect
                     .transition()
                     .duration(350)
                     .attr('class', 'inactive')
-
-                d3.select('.' + rect.attr('id'))
-                    .selectAll('.bar')
-                    .attr('width', '0')
-
-
+                    newData = filterData(data, id, val)
+                    console.log(data)
+                    update(val, newData)
             } else {
                 rect
                     .transition()
                     .duration(350)
                     .attr('class', 'active')
-
+                console.log(data)
+                update(val, data)
             }
         })
 }

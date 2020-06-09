@@ -23,7 +23,7 @@ const getUrl = window.location
 const baseUrl = getUrl.protocol + '//' + getUrl.host
 async function getData() {
     const baseUrl = window.location.protocol + '//' + window.location.host
-    const endpoint = '/data/all/'
+    const endpoint = '/pamdata/'
     const userID = 'PA043F3'
     const response = await fetch(`${baseUrl}${endpoint}${userID}`)
     const json = await response.json()
@@ -90,7 +90,6 @@ function bindSelect(data){
         update(val, data)
     })
 }
-
 
 // =========================================
 // =============Bar chart===================
@@ -172,7 +171,7 @@ function makeBars(subGroups, newData, maxValue, groups) {
         })
         .attr('width', '0')
         .transition()
-        .duration(500)
+        .duration(1000)
         .attr("width", function (d) {
             let x1 = x(d[1])
             let x2 = x(d[0])
@@ -253,7 +252,7 @@ function makeChart(val, data) {
 // =============Update======================
 // =========================================
 function update(val, data) {
-    d3.selectAll('.bar').transition().duration(500).attr('width', '0').on('end', updateChart)
+    d3.selectAll('.bar').transition().duration(100).attr('width', '0').on('end', updateChart)
 
     function updateChart() {
         // d3.selectAll('.bar').remove()

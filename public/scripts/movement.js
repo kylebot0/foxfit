@@ -63,13 +63,13 @@ function transformData(rawData) {
 // =========================================
 init()
 
-async function init(){
+async function init() {
     let rawData = await getData()
     let transformedData = transformData(rawData)
     bindSelect(transformedData)
 }
 
-function bindSelect(data){
+function bindSelect(data) {
     data.forEach((item) => {
         let option = 'Week ' + item.week
         let markup = `<option value="${item.week}">${option}</option>`
@@ -87,7 +87,7 @@ function bindSelect(data){
         //     d3.selectAll('.tick').remove()
         //     makeChart(val, data)
         // }
-        
+
         update(val, data)
     })
 }
@@ -148,7 +148,7 @@ function makeBars(subGroups, newData, maxValue, groups) {
         .data(newData)
         .enter().append('g')
 
-    // console.log(bars)
+    console.log(bars)
 
     bars
         .attr('fill', function (d) {
@@ -227,11 +227,7 @@ function makeLegend(subGroups, val) {
         .attr('text-anchor', 'start')
         .attr('alignment-baseline', 'hanging')
 
-    legend.selectAll('rect')
-        .on('click', function (d) {
-            let thisRect = this
-            onClick(thisRect, val)
-        })
+
 }
 
 
@@ -247,19 +243,16 @@ function makeChart(val, data) {
         return
     } else {
         makeLegend(subGroups, val)
+
         isThereALegend = true
     }
+    toggleOptions(data)
+    console.log('f')
 }
 // =========================================
 // =============Update======================
 // =========================================
 function update(val, data) {
-    d3.selectAll('.bar').transition().duration(500).attr('width', '0').on('end', updateChart)
-
-    function updateChart() {
-        // d3.selectAll('.bar').remove()
-        // d3.selectAll('.tick').remove()
-        // makeChart(val)
         let subGroups = getSubGroup(val, data)
         let newData = getStackedData(subGroups, val, data)
         let groups = getGroup(val, data)
@@ -268,29 +261,22 @@ function update(val, data) {
             .domain([0, 400])
             .nice()
             .range([0, width])
-        svg.append('g')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(d3.axisBottom(x))
 
         const y = d3.scaleBand()
             .range([0, height])
             .domain(groups)
-        svg.append('g')
-            .call(d3.axisLeft(y).tickFormat((d) => {
-                return getDay(d)
-            }))
-
-        let bars = svg.append('g')
-            .selectAll('g')
-            .data(newData)
-            .enter().append('g')
+           
+            let bars = svg
+        .selectAll('g.chart')
+        .data(newData)
 
         bars
+            .selectAll('rect')
             .data(function (d) {
-                console.log(d)
                 return d
             })
-            .enter()
+            .transition()
+            .duration(500)
             .attr('x', (d) => {
                 return x(d[0])
             })
@@ -304,32 +290,33 @@ function update(val, data) {
                 return coords
             })
             .attr('height', (y.bandwidth() - 50))
-
-    }
-
 }
 
-function onClick(thisRect) {
-    let rect = d3.select(thisRect)
-    console.log(rect.attr('id'))
-    if (rect.attr('class') == 'active') {
-        rect
-            .transition()
-            .duration(350)
-            .attr('class', 'inactive')
+function toggleOptions(data) {
+    // console.log(legend.selectAll('rect'))
+    d3.select('.legend').selectAll('rect')
+        .on('click', function (d) {
+            console.log(data)
+            let rect = d3.select(this)
+            if (rect.attr('class') == 'active') {
+                rect
+                    .transition()
+                    .duration(350)
+                    .attr('class', 'inactive')
 
-        d3.select('.' + rect.attr('id'))
-            .selectAll('.bar')
-            .attr('width', '0')
+                d3.select('.' + rect.attr('id'))
+                    .selectAll('.bar')
+                    .attr('width', '0')
 
 
-    } else {
-        rect
-            .transition()
-            .duration(350)
-            .attr('class', 'active')
+            } else {
+                rect
+                    .transition()
+                    .duration(350)
+                    .attr('class', 'active')
 
-    }
+            }
+        })
 }
 
 function maxVal(val) {

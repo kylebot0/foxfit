@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <title><%= title %></title>
-  <link rel='stylesheet' href='/stylesheets/movement-graph.css' />
-</head>
+<% include partials/head.ejs %>
 
 <body>
-  <h1><%= title %></h1>
+  <% include partials/header.ejs %>
   <% include ./partials/graphs/movement.ejs %>
 </body>
 

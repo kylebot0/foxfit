@@ -10,14 +10,21 @@ const margin = {
 let isThereAChart = false
 let isThereALegend = false
 
-const svg = d3.select('body').append('svg')
+const svg = d3.select('.svg')
     .attr('class', 'graph')
-    .attr('width', width + margin.left + margin.right)
+    .attr('width', (width + margin.left + margin.right)/2)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
     .attr('transform',
-        'translate(' + margin.left + ',' + margin.top + ')')
+        'translate(180,' + margin.top + ')')
 
+const svg2 = d3.select('.svg2')
+    .attr('class', 'graph')
+    .attr('width', (width + margin.left + margin.right)/ 2)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform',
+        'translate(10,' + margin.top + ')')
 
 // =======================GET DATA================================
 const getUrl = window.location
@@ -77,12 +84,20 @@ async function init() {
     let rawData = await getData()
     const transformedData = transformData(rawData)
     bindSelect(transformedData)
-    makeChart(0, transformedData)
+    makeRightChart(0, transformedData)
+    makeLeftChart(1, transformedData)
+
     toggleOptions(0, transformedData)
-    d3.select('select').on('change', function (d) {
-        let val = d3.select('option:checked').node().value
+    d3.select('.select-left').on('change', function (d) {
+        let val = d3.select('.select-left option:checked').node().value
         val = val - 1
-        update(val, transformedData)
+        updateLeft(val, transformedData)
+        toggleOptions(val, transformedData)
+    })
+    d3.select('.select-right').on('change', function (d) {
+        let val = d3.select('.select-right option:checked').node().value
+        val = val - 1
+        updateRight(val, transformedData)
         toggleOptions(val, transformedData)
     })
 
@@ -92,8 +107,10 @@ function bindSelect(data) {
     data.forEach((item) => {
         let option = 'Week ' + item.week
         let markup = `<option value="${item.week}">${option}</option>`
-        let select = document.querySelector('select')
-        select.insertAdjacentHTML('beforeend', markup)
+        let select = document.querySelectorAll('select')
+        select.forEach((e) => {
+            e.insertAdjacentHTML('beforeend', markup)
+        })
     })
 }
 
@@ -125,11 +142,11 @@ function getGroup(val, data) {
     return groups
 }
 
-function makeBars(subGroups, newData, maxValue, groups) {
+function makeRightBars(subGroups, newData, maxValue, groups) {
     const x = d3.scaleLinear()
         .domain([0, 400])
         .nice()
-        .range([0, width])
+        .range([width / 2, 0])
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x))
@@ -137,10 +154,11 @@ function makeBars(subGroups, newData, maxValue, groups) {
     const y = d3.scaleBand()
         .range([0, height])
         .domain(groups)
-    svg.append('g')
-        .call(d3.axisLeft(y).tickFormat((d) => {
-            return getDay(d)
-        }))
+
+    // svg.append('g')
+    //     .call(d3.axisLeft(y).tickFormat((d) => {
+    //         return getDay(d)
+    //     }))
 
     const color = d3.scaleOrdinal()
         .domain(subGroups)
@@ -148,7 +166,73 @@ function makeBars(subGroups, newData, maxValue, groups) {
 
 
 
-    let bars = svg.append('g')
+    let bars = svg.append('g').attr('class','bar-group')
+        .selectAll('g')
+        .data(newData)
+        .enter().append('g')
+
+    console.log(bars)
+
+    bars
+        .attr('fill', function (d) {
+            return color(d.key)
+        })
+        .attr('class', (d) => {
+            return d.key + ' chart'
+        })
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .enter().append('rect')
+        .attr('class', (d) => {
+            return 'bar'
+        })
+        .attr('x', (d) => {
+            return x(d[1])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', '0')
+        .transition()
+        .duration(500)
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x2 - x1)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    isThereAChart = true
+}
+
+function makeLeftBars(subGroups, newData, maxValue, groups) {
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([0, width /2])
+    svg2.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x))
+
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+
+    // svg.append('g')
+    //     .call(d3.axisLeft(y).tickFormat((d) => {
+    //         return getDay(d)
+    //     }))
+
+    const color = d3.scaleOrdinal()
+        .domain(subGroups)
+        .range(['#1AC6D0', '#15989F', '#382183'])
+
+
+
+    let bars = svg2.append('g')
         .selectAll('g')
         .data(newData)
         .enter().append('g')
@@ -176,6 +260,7 @@ function makeBars(subGroups, newData, maxValue, groups) {
         .attr('y', function (d) {
             return y(d.data.date)
         })
+        // .attr('transform', 'translate(-420, 0)')
         .attr('width', '0')
         .transition()
         .duration(500)
@@ -235,15 +320,14 @@ function makeLegend(subGroups, val) {
 
 }
 
-
-function makeChart(val, data) {
+function makeLeftChart(val, data) {
     let subGroups = getSubGroup(val, data)
     let newData = getStackedData(subGroups, val, data)
     let groups = getGroup(val, data)
     let maxValue = maxVal(data[val].group.map((item) => {
         return item.total
     }))
-    makeBars(subGroups, newData, maxValue, groups)
+    makeLeftBars(subGroups, newData, maxValue, groups)
     if (isThereALegend) {
         return
     } else {
@@ -253,10 +337,61 @@ function makeChart(val, data) {
     }
 
 }
+function makeRightChart(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
+    let maxValue = maxVal(data[val].group.map((item) => {
+        return item.total
+    }))
+    makeRightBars(subGroups, newData, maxValue, groups)
+}
 // =========================================
 // =============Update======================
 // =========================================
-function update(val, data) {
+function updateLeft(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
+
+    const x = d3.scaleLinear()
+    .domain([0, 400])
+    .nice()
+    .range([width / 2, 0])
+
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+
+    let bars = svg
+        .selectAll('g.chart')
+        .data(newData)
+
+    bars
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .transition()
+        .duration(500)
+        .attr('x', (d) => {
+            return x(d[1])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x2 - x1)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    // toggleOptions(val, data)
+}
+
+function updateRight(val, data) {
     let subGroups = getSubGroup(val, data)
     let newData = getStackedData(subGroups, val, data)
     let groups = getGroup(val, data)
@@ -264,13 +399,13 @@ function update(val, data) {
     const x = d3.scaleLinear()
         .domain([0, 400])
         .nice()
-        .range([0, width])
+        .range([0, width /2])
 
     const y = d3.scaleBand()
         .range([0, height])
         .domain(groups)
 
-    let bars = svg
+    let bars = svg2
         .selectAll('g.chart')
         .data(newData)
 
@@ -310,9 +445,9 @@ function toggleOptions(val, data) {
                     .transition()
                     .duration(350)
                     .attr('class', 'inactive')
-                    newData = filterData(data, id, val)
-                    console.log(data)
-                    update(val, newData)
+                newData = filterData(data, id, val)
+                console.log(data)
+                update(val, newData)
             } else {
                 rect
                     .transition()

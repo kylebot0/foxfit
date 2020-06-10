@@ -4,9 +4,16 @@
   <body>
     <% include partials/header.ejs %>
     <div class="container-select">
-      <select id="weeks" name="week">
+      <select id="weeks" class="select-left" name="week">
+      </select>
+      <select id="weeks" class="select-right" name="week">
       </select>
     </div>
+    <div class="container-svg">
+      <svg class="svg"></svg>
+      <svg class="svg2"></svg>
+    </div>
+    
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="/scripts/movement.js"></script>
   </body>

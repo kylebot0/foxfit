@@ -5,22 +5,22 @@ const margin = {
         left: 200
     },
     width = window.innerWidth - margin.left - margin.right,
-    height = 1250 - margin.top - margin.bottom
+    height = 1100 - margin.top - margin.bottom
 
 let isThereAChart = false
 let isThereALegend = false
 
 const svg = d3.select('.svg')
-    .attr('class', 'graph')
-    .attr('width', (width + margin.left + margin.right)/2)
+    .attr('class', 'graph left')
+    .attr('width', (width + margin.left + margin.right) / 2)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
     .attr('transform',
         'translate(180,' + margin.top + ')')
 
 const svg2 = d3.select('.svg2')
-    .attr('class', 'graph')
-    .attr('width', (width + margin.left + margin.right)/ 2)
+    .attr('class', 'graph right')
+    .attr('width', (width + margin.left + margin.right) / 2)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
     .attr('transform',
@@ -88,6 +88,7 @@ async function init() {
     makeLeftChart(1, transformedData)
 
     toggleOptions(0, transformedData)
+    addSlider()
     d3.select('.select-left').on('change', function (d) {
         let val = d3.select('.select-left option:checked').node().value
         val = val - 1
@@ -162,11 +163,11 @@ function makeRightBars(subGroups, newData, maxValue, groups) {
 
     const color = d3.scaleOrdinal()
         .domain(subGroups)
-        .range(['#1AC6D0', '#15989F', '#382183'])
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
 
 
 
-    let bars = svg.append('g').attr('class','bar-group')
+    let bars = svg.append('g').attr('class', 'bar-group')
         .selectAll('g')
         .data(newData)
         .enter().append('g')
@@ -212,7 +213,7 @@ function makeLeftBars(subGroups, newData, maxValue, groups) {
     const x = d3.scaleLinear()
         .domain([0, 400])
         .nice()
-        .range([0, width /2])
+        .range([0, width / 2])
     svg2.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x))
@@ -220,15 +221,14 @@ function makeLeftBars(subGroups, newData, maxValue, groups) {
     const y = d3.scaleBand()
         .range([0, height])
         .domain(groups)
-
-    // svg.append('g')
-    //     .call(d3.axisLeft(y).tickFormat((d) => {
-    //         return getDay(d)
-    //     }))
+    svg.append('g')
+        .call(d3.axisLeft(y).tickFormat((d) => {
+            return getDay(d)
+        }))
 
     const color = d3.scaleOrdinal()
         .domain(subGroups)
-        .range(['#1AC6D0', '#15989F', '#382183'])
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
 
 
 
@@ -278,7 +278,7 @@ function makeLeftBars(subGroups, newData, maxValue, groups) {
 function makeLegend(subGroups, val) {
     const colors = d3.scaleOrdinal()
         .domain(subGroups)
-        .range(['#1AC6D0', '#15989F', '#382183'])
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
 
     const legend = d3.select('svg').append('g')
         .attr('class', 'legend')
@@ -337,6 +337,7 @@ function makeLeftChart(val, data) {
     }
 
 }
+
 function makeRightChart(val, data) {
     let subGroups = getSubGroup(val, data)
     let newData = getStackedData(subGroups, val, data)
@@ -345,6 +346,106 @@ function makeRightChart(val, data) {
         return item.total
     }))
     makeRightBars(subGroups, newData, maxValue, groups)
+}
+
+function addSlider() {
+    d3.selectAll('svg')
+        .on('click', function (d) {
+            let chart = d3.select('.graph').node().getBoundingClientRect()
+            let bar = d3.select('.graph > g').node().getBoundingClientRect()
+            let mousex = d3.event.pageX - document.querySelector('.graph').getBoundingClientRect().x + 10
+
+            d3.selectAll('.page-line').remove()
+            
+            d3.select('.right').append('line')
+            .attr('x1', ()=>{
+                if(mousex > chart.width){
+                    return mousex - chart.width
+                }
+                return chart.width - mousex
+            })
+            .attr('x2', ()=>{
+                if(mousex > chart.width){
+                    return mousex - chart.width
+                }
+                return chart.width - mousex
+            })
+            .attr('y1', bar.bottom - 200)
+            .attr('y2', bar.top - 200)
+            .attr('stroke-width', '1').style('stroke', 'black')
+            .attr('class', 'page-line')
+            .attr('stroke-dasharray', '10 10')
+
+            d3.select('.right').append('rect')
+            .attr('x', '0')
+            .attr('y', bar.top - 200)
+            .attr('height', (bar.height))
+            .attr('width', ()=>{
+                if(mousex > chart.width){
+                    return mousex - chart.width
+                }
+                return chart.width - mousex
+            })
+            .attr('fill', '#9DD3CF')
+            .attr('opacity', '0.4')
+            .attr('class', 'page-line')
+
+            d3.selectAll('.left').append('line')
+            .attr('x1', ()=>{
+                if(mousex > chart.width){
+                    return  chart.width * 2 - mousex 
+                }
+                return mousex
+            })
+
+            d3.select('.left').append('rect')
+            .attr('x', ()=>{
+                if(mousex > chart.width){
+                    return  chart.width * 2 - mousex 
+                }
+                return mousex
+            })
+            .attr('y', bar.top - 200)
+            .attr('height', (bar.height))
+            .attr('width', ()=>{
+                if(mousex > chart.width){
+                    return mousex - chart.width
+                }
+                return chart.width - mousex
+            })
+            .attr('fill', '#9DD3CF')
+            .attr('opacity', '0.4')
+            .attr('class', 'page-line')
+
+            d3.selectAll('.left').append('line')
+            .attr('x1', ()=>{
+                if(mousex > chart.width){
+                    return  chart.width * 2 - mousex 
+                }
+                return mousex
+            })
+
+            d3.selectAll('.left').append('line')
+            .attr('x1', ()=>{
+                if(mousex > chart.width){
+                    return  chart.width * 2 - mousex 
+                }
+                return mousex
+            })
+            .attr('x2', ()=>{
+                if(mousex > chart.width){
+                    return chart.width * 2 - mousex 
+                }
+                return mousex
+            })
+            .attr('y1', bar.bottom - 200)
+            .attr('y2', bar.top - 200)
+            .attr('stroke-width', '1').style('stroke', 'black')
+            .attr('class', 'page-line')
+            .attr('stroke-dasharray', '10 10')
+            console.log(chart.width ,mousex)
+
+        })
 }
 // =========================================
 // =============Update======================
@@ -355,9 +456,9 @@ function updateLeft(val, data) {
     let groups = getGroup(val, data)
 
     const x = d3.scaleLinear()
-    .domain([0, 400])
-    .nice()
-    .range([width / 2, 0])
+        .domain([0, 400])
+        .nice()
+        .range([width / 2, 0])
 
     const y = d3.scaleBand()
         .range([0, height])
@@ -399,7 +500,7 @@ function updateRight(val, data) {
     const x = d3.scaleLinear()
         .domain([0, 400])
         .nice()
-        .range([0, width /2])
+        .range([0, width / 2])
 
     const y = d3.scaleBand()
         .range([0, height])

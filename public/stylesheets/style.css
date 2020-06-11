@@ -51,9 +51,9 @@ body{
   filter: invert(1);
 }
 
-.planets #grid div:nth-last-of-type(2n + 2) {margin-top:15%;}
+.planets #grid div:nth-last-of-type(2n + 2) {margin-top:25vh;}
 
-.planets #grid div:nth-last-of-type(2n + 1) {margin-top:25%;}
+.planets #grid div:nth-last-of-type(2n + 1) {margin-top:45vh;}
 
 .planets #grid div {
   display: flex;
@@ -123,4 +123,62 @@ z-index: 1;
 -o-animation:move-twink-back 200s linear infinite;
 -webkit-animation:move-twink-back 200s linear infinite;
 animation:move-twink-back 200s linear infinite;
+}
+
+.rocket img:not(.star){
+  width: 80px;
+  position: absolute;
+  top:0;left:0;
+}
+.rocket.transition img:not(.star) {transition: all 4s ease-in-out;}
+
+.rocket.planet-1 img:not(.star) {
+  top: 42vh;
+  left: 7%;
+  transform: rotate(0deg);
+}
+
+.rocket.planet-2 img:not(.star) {
+  top: 35vh;
+  left: 21%;
+  transform: rotate(60deg);
+}
+
+.rocket.planet-3 img:not(.star) {
+  top: 47vh;
+  left: 36%;
+  transform: rotate(-20deg);
+}
+
+.rocket.planet-4 img:not(.star) {
+  top: 35vh;
+  left: 50%;
+  transform: rotate(40deg);
+}
+
+.rocket.planet-5 img:not(.star) {
+  top: 47vh;
+  left: 65%;
+  transform: rotate(0deg);
+}
+
+.rocket.planet-6 img:not(.star) {
+  top: 34vh;
+  left: 79%;
+  transform: rotate(30deg);
+}
+
+.rocket.planet-7 img:not(.star) {
+  top: 39vh;
+  left: 93%;
+  transform: rotate(0deg);
+}
+
+.star{
+  position:absolute;
+  transition: top .5s linear, left .5s linear, opacity .2s;
+}
+
+.star.fade {
+  opacity: 0;
 }

@@ -84,7 +84,7 @@ async function init() {
     const transformedData = transformData(rawData)
     bindSelect(transformedData)
     makeRightChart(0, transformedData)
-    makeLeftChart(1, transformedData)
+    makeLeftChart(0, transformedData)
 
     toggleOptions(0, transformedData)
     addSlider()

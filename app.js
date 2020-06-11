@@ -4,12 +4,13 @@ const path = require('path')
 const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 
-const indexRouter = require('./routes/index');
-const zorgverlenerRouter = require('./routes/zorgverlener');
+const indexRouter = require('./routes/index')
+const movementRouter = require('./routes/movement')
 const dataRouter = require('./routes/data')
 const dayGoalRouter = require('./routes/daygoal')
 const movementRouter = require('./routes/movement')
 const planets = require('./routes/planets')
+const feelingRouter = require('./routes/feeling')
 
 const app = express()
 
@@ -23,12 +24,12 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/', indexRouter);
-app.use('/zorgverlener', zorgverlenerRouter);
-app.use('/data', dataRouter)
-app.use('/dagdoel', dayGoalRouter)
+app.use('/', indexRouter)
 app.use('/beweging', movementRouter)
 app.use('/planeten', planets)
+app.use('/data', dataRouter)
+app.use('/dagdoelen', dayGoalRouter)
+app.use('/gevoel', feelingRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

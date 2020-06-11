@@ -1,269 +1,638 @@
-/* eslint-disable no-undef */
-
-// SETTINGS
-const settings = {
-    container: {
-        id: 'graph-container',
+const margin = {
+        top: 100,
+        right: 200,
+        bottom: 250,
+        left: 200
     },
-    margins: {
-        left:50,
-        right:50,
-        top:40,
-        bottom: 40
-    },
-    spaceBetweenGraphs: 0
-}
+    width = window.innerWidth - margin.left - margin.right,
+    height = window.innerHeight - 250 - margin.top - margin.bottom
 
-const getters = {
-    container: {
-        getElement: () => document.getElementById(settings.container.id),
-        getWidth: () => getters.container.getElement().offsetWidth,
-        getHeight: () => getters.container.getElement().offsetHeight
-    },
-    movementGraph: {
-        getWidth: () => getters.container.getWidth() - settings.margins.left - settings.margins.right,
-        getHeight: () => (getters.container.getHeight() / 2) - settings.margins.top - settings.spaceBetweenGraphs / 2
-    },
-    feelingGraph: {
-        getWidth: () => getters.container.getWidth() - settings.margins.left - settings.margins.right,
-        getHeight: () => (getters.container.getHeight() / 2) - settings.margins.bottom - settings.spaceBetweenGraphs /2
-    }
-}
+let isThereAChart = false
 
+const svg = d3.select('.svg')
+    .attr('class', 'graph left')
+    .attr('width', (width + margin.left + margin.right) / 2)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform',
+        'translate(180,' + margin.top + ')')
 
-// EXECUTED FUNCTIONS
+const svg2 = d3.select('.svg2')
+    .attr('class', 'graph right')
+    .attr('width', (width + margin.left + margin.right) / 2)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform',
+        'translate(10,' + margin.top + ')')
 
-getData().then(data => {
-    const weekSelectElement = document.getElementById('select-week')
-    const startDate = new Date(data.user[0].startdate)   
-    const selectedWeekNr = weekSelectElement.selectedIndex
-    const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
-    const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
-    const averageFeel = getAverageFeel(data.daily)
-
-    createGraphs(pamDataForWeek, dailyDataForWeek, averageFeel)
-
-    weekSelectElement.addEventListener('change', (event) => { 
-        const selectedWeekNr = event.target.selectedIndex
-        const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
-        const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
-
-        createGraphs(pamDataForWeek, dailyDataForWeek, averageFeel)
-        // updateFeelingGraph(pamDataForWeek, dailyDataForWeek, averageFeel)
-    })
-})
-
-// GRAPH FUNCTIONS
-
-function createGraphs(pamData, dailyData, averageFeel) {
-    // clear container (remove when update function is finished)
-    getters.container.getElement().innerHTML = ''
-
-    // graph size dynamics
-    
-    console.log(pamData)    
-
-    // create svg
-    const svg = d3.select('#graph-container').append('svg')
-        .attr('height', getters.container.getHeight())
-        .attr('width', getters.container.getWidth())
-        .attr('id', 'movement-graph')
-
-    createMovementGraph(svg, pamData)
-    createFeelingGraph(svg, dailyData, averageFeel)
-}
-
-function createMovementGraph(svg, pamData) {
-    
-    const x = d3.scaleBand()
-        .domain(pamData.map(d => new Date(d.date)))
-        .range([0, getters.movementGraph.getWidth()])
-        .paddingInner(0.2)
-        .paddingOuter(0.2)
-
-    const y = d3.scaleLinear()
-        .domain([0, 400])
-        .range([getters.movementGraph.getHeight(), 0])
-
-    const xAxis = d3.axisBottom(x).ticks(0).tickFormat('').tickSize(0)
-    const yAxis = d3.axisLeft(y).ticks(9).tickPadding(10).tickSize(2)
-
-    const chartGroup = svg.append('g').attr('transform', `translate(${settings.margins.left}, ${settings.margins.top})`)
-
-    chartGroup.append('g')
-        .attr('class','axis y')
-        .call(yAxis)
-
-    chartGroup.append('g')
-        .attr('class','axis x')
-        .attr('transform', `translate(0, ${getters.movementGraph.getHeight()})`)
-        .call(xAxis)
-
-    chartGroup.selectAll('.bar-light')
-        .data(pamData)
-        .enter().append('rect')
-        .attr('class', 'bar-light')
-        .style('fill', '#9DD3CF')
-        .attr('x', function(d) { return x(new Date(d.date)) })
-        .attr('width', x.bandwidth())
-        .attr('y', function(d) { return y(d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.light_activity) })
-
-    chartGroup.selectAll('.bar-medium')
-        .data(pamData)
-        .enter().append('rect')
-        .attr('class', 'bar-medium')
-        .style('fill', '#3CC3B8')
-        .attr('x', function(d) { return x(new Date(d.date)) })
-        .attr('width', x.bandwidth())
-        .attr('y', function(d) { return y(d.medium_activity + d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.medium_activity) })
-
-    chartGroup.selectAll('.bar-heavy')
-        .data(pamData)
-        .enter().append('rect')
-        .attr('class', 'bar-heavy')
-        .style('fill', '#249E93')
-        .attr('x', function(d) { return x(new Date(d.date)) })
-        .attr('width', x.bandwidth())
-        .attr('y', function(d) { return y(d.heavy_activity + d.medium_activity + d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.heavy_activity) })
-}
-
-
-function createFeelingGraph(svg, dailyData, averageFeel) {
-    console.log(dailyData)
-    const averageFeelForThisWeek = d3.mean(dailyData, (d) => { return d3.mean([d.morningfeel, d.eveningfeel], d => d < 0 ? 'not valid' : d ) })
-
-    const x = d3.scaleBand()
-        .domain(dailyData.map(d => new Date(d.date)))
-        .range([0, getters.feelingGraph.getWidth()])
-        .paddingInner(0.2)
-        .paddingOuter(0.2)
-
-    const y = d3.scaleLinear()
-        .domain([0, 12])
-        .range([getters.feelingGraph.getHeight(), 0])
-
-    const xAxis = d3.axisBottom(x).ticks(7).tickFormat(x => {
-        const formatTime = d3.timeFormat('%A')
-        return formatTime(x)
-    })
-    const yAxis = d3.axisLeft(y).ticks(9).tickPadding(10).tickSize(2)
-
-    const chartGroup = svg.append('g').attr('transform', `translate(${settings.margins.left}, ${settings.margins.top + getters.movementGraph.getHeight() + settings.spaceBetweenGraphs})`).attr('class', 'feel-graph')
-
-    chartGroup.append('g')
-        .attr('class','feel-axis-y axis y')
-        .call(yAxis)
-
-    chartGroup.append('g')
-        .attr('class','axis x')
-        .attr('transform', `translate(0, ${getters.feelingGraph.getHeight()})`)
-        .call(xAxis)
-        
-    chartGroup.selectAll('.bar-divider')
-        .data(dailyData)
-        .enter().append('line')
-        .attr('class', 'bar-divider')
-        .attr('x1', function(d) {
-            let currentDate = new Date(d.date)
-            currentDate.setDate(currentDate.getDate() + 1)
-            let newX = x(currentDate) - (x.paddingInner() * getters.feelingGraph.getWidth() / 14)
-            return newX > 0 ? newX : getters.feelingGraph.getWidth() - (x.paddingInner() * getters.feelingGraph.getWidth() / 14)
-        })
-        .attr('y1', 0)
-        .attr('x2', function(d) {
-            let currentDate = new Date(d.date)
-            currentDate.setDate(currentDate.getDate() + 1)
-            let newX = x(currentDate) - (x.paddingInner() * getters.feelingGraph.getWidth() / 14)
-            return newX > 0 ? newX : getters.feelingGraph.getWidth() - (x.paddingInner() * getters.feelingGraph.getWidth() / 14)
-        })
-        .attr('y2', getters.feelingGraph.getHeight())
-        .attr('stroke-width', 0.5)
-        .attr('stroke', '#197068')
-        .attr('stroke-dasharray', 4)
-
-    chartGroup.selectAll('.bar-morning')
-        .data(dailyData)
-        .enter().append('rect')
-        .attr('class', 'bar-morning')
-        .style('fill', d => d.morningfeel < 0 ? '#ededed' : '#9DD3CF')
-        .attr('x', function(d) { return x(new Date(d.date)) })
-        .attr('width', x.bandwidth() / 2)
-        .attr('y', function(d) { return y(d.morningfeel < 0 ? 10 : d.morningfeel) })
-        .attr('height', function(d) { return getters.feelingGraph.getHeight() - y(d.morningfeel < 0 ? 10 : d.morningfeel) })
-
-    chartGroup.selectAll('.bar-evening')
-        .data(dailyData)
-        .enter().append('rect')
-        .attr('class', 'bar-evening')
-        .style('fill', d => d.eveningfeel < 0 ? 'none' : '#249E93')
-        .attr('x', function(d) { return x(new Date(d.date)) + x.bandwidth() / 2 })
-        .attr('width', x.bandwidth() / 2)
-        .attr('y', function(d) { return y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
-        .attr('height', function(d) { return getters.feelingGraph.getHeight() - y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
-    
-    chartGroup.append('line')
-        .attr('class', 'baseline')
-        .attr('x1', 0)
-        .attr('y1', y(averageFeelForThisWeek))
-        .attr('x2', getters.feelingGraph.getWidth())
-        .attr('y2', y(averageFeelForThisWeek))
-        .attr('stroke-width', 1)
-        .attr('stroke', '#197068')
-
-    chartGroup.append('line')
-        .attr('class', 'total-average')
-        .attr('x1', 0)
-        .attr('y1', y(averageFeel))
-        .attr('x2', getters.feelingGraph.getWidth())
-        .attr('y2', y(averageFeel))
-        .attr('stroke-width', 1)
-        .attr('stroke', '#197068')
-        .attr('stroke-dasharray', 4)
-
-}
-
-
-function updateMovementGraph(pamData) {
-    console.log(pamData)    
-}
-
-// MAIN FUNCTIONS
+// =======================GET DATA================================
+const getUrl = window.location
+const baseUrl = getUrl.protocol + '//' + getUrl.host
 async function getData() {
     const baseUrl = window.location.protocol + '//' + window.location.host
-    const endpoint = '/data/movement/'
+    const endpoint = '/data/all/'
     const userID = 'PA043F3'
     const response = await fetch(`${baseUrl}${endpoint}${userID}`)
-    const json = await response.json()    
-    return json.data
+    const json = await response.json()
+    return json
 }
 
-// HELPER FUNCTIONS
-function filterForWeek(data, startDate, weekNumber) {
-    const filteredData = data.filter((datapoint) => {
-        return isWithinSelectedWeek(datapoint, startDate, weekNumber)
+function transformData(rawData) {
+    const data = []
+    let week = []
+    let count = 1
+    rawData.data.pamData.forEach((item, i) => {
+        let activity = {
+            date: item.date,
+            total: (item.light_activity + item.medium_activity + item.heavy_activity),
+            light: item.light_activity,
+            medium: item.medium_activity,
+            heavy: item.heavy_activity
+        }
+        if (week.length >= 7) {
+            data.push({
+                week: count,
+                group: week
+            })
+            count = count + 1
+            week = []
+            week.push(activity)
+            return
+        } else {
+            week.push(activity)
+        }
     })
-    return filteredData    
+    return data
 }
 
-function getDayDifference(date1, date2) {
-    const diffTime = Math.abs(date1 - date2)
-    let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return date2 < date1 ? diffDays * -1 : diffDays
+function filterData(data, id, val) {
+    const deepCopy = JSON.parse(JSON.stringify(data))
+    let week = deepCopy[val].group
+    week.forEach((d) => {
+        d[id] = 0
+        // delete d[id]
+    })
+    return deepCopy
+}
+// =========================================
+// =============Select option===============
+// =========================================
+init()
+
+async function init() {
+    let rawData = await getData()
+    const transformedData = transformData(rawData)
+    bindSelect(transformedData)
+    makeRightChart(0, transformedData)
+    makeLeftChart(0, transformedData)
+
+    toggleOptions(0, transformedData)
+    addSlider()
+    d3.select('.select-left').on('change', function (d) {
+        let val = d3.select('.select-left option:checked').node().value
+        let rightVal = d3.select('.select-right option:checked').node().value
+        val = val - 1
+
+        d3.selectAll('.legend rect')
+        .transition()
+        .duration(350)
+        .attr('class', 'active')
+
+        updateRight(rightVal, transformedData)
+        updateLeft(val, transformedData)
+        toggleOptions(val, transformedData)
+    })
+    d3.select('.select-right').on('change', function (d) {
+        let val = d3.select('.select-right option:checked').node().value
+        let leftVal = d3.select('.select-left option:checked').node().value
+        val = val - 1
+
+        d3.selectAll('.legend rect')
+        .transition()
+        .duration(350)
+        .attr('class', 'active')
+
+        updateRight(val, transformedData)
+        updateLeft(leftVal, transformedData)
+        toggleOptions(val, transformedData)
+    })
+
 }
 
-function getAverageFeel(data) {
-    return d3.mean(data, (d) => {
-        return d3.mean([d.morningfeel, d.eveningfeel], d => d < 0 ? 'not valid' : d )
+function bindSelect(data) {
+    data.forEach((item) => {
+        let option = 'Week ' + item.week
+        let markup = `<option value="${item.week}">${option}</option>`
+        let select = document.querySelectorAll('select')
+        select.forEach((e) => {
+            e.insertAdjacentHTML('beforeend', markup)
+        })
     })
 }
 
-// CHECKER FUNCTIONS
-function isWithinSelectedWeek(datapoint, startDate, weekNumber) {
-    const dateForDataPoint = new Date(datapoint.date)
-    const daysAway = getDayDifference(startDate, dateForDataPoint)
-    const withinWeek = daysAway <= 7 * weekNumber && daysAway > 7 * (weekNumber - 1)
-    return withinWeek ? true : false
+
+// =========================================
+// =============Bar chart===================
+// =========================================
+
+function getSubGroup(val, data) {
+    const subgroups = Object.keys({
+        light: data[val].light_activity,
+        medium: data[val].medium_activity,
+        heavy: data[val].heavy_activity
+    })
+    return subgroups
+}
+
+function getStackedData(subgroups, val, data) {
+    const stackedData = d3.stack()
+        .keys(subgroups)
+        (data[val].group)
+    return stackedData
+}
+
+function getGroup(val, data) {
+    const groups = d3.map(data[val].group, (d) => {
+        return (d.date)
+    }).keys()
+    return groups
+}
+
+function makeRightBars(subGroups, newData, maxValue, groups) {
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([width / 2, 0])
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x))
+
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+    const color = d3.scaleOrdinal()
+        .domain(subGroups)
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
+
+
+
+    let bars = svg.append('g').attr('class', 'bar-group')
+        .selectAll('g')
+        .data(newData)
+        .enter().append('g')
+
+    console.log(bars)
+
+    bars
+        .attr('fill', function (d) {
+            return color(d.key)
+        })
+        .attr('class', (d) => {
+            return d.key + ' chart'
+        })
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .enter().append('rect')
+        .attr('class', (d) => {
+            return 'bar'
+        })
+        .attr('x', (d) => {
+            return x(d[1])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', '0')
+        .transition()
+        .duration(500)
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x2 - x1)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    isThereAChart = true
+}
+
+function makeLeftBars(subGroups, newData, maxValue, groups) {
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([0, width / 2])
+    svg2.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x))
+
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+    svg.append('g')
+        .call(d3.axisLeft(y).tickFormat((d) => {
+            return getDay(d)
+        }))
+
+    const color = d3.scaleOrdinal()
+        .domain(subGroups)
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
+
+
+
+    let bars = svg2.append('g')
+        .selectAll('g')
+        .data(newData)
+        .enter().append('g')
+
+    console.log(bars)
+
+    bars
+        .attr('fill', function (d) {
+            return color(d.key)
+        })
+        .attr('class', (d) => {
+            return d.key + ' chart'
+        })
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .enter().append('rect')
+        .attr('class', (d) => {
+            return 'bar'
+        })
+        .attr('x', (d) => {
+            return x(d[0])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', '0')
+        .transition()
+        .duration(500)
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x1 - x2)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    isThereAChart = true
+}
+
+function makeLegend(subGroups, val) {
+    const colors = d3.scaleOrdinal()
+        .domain(subGroups)
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
+
+    const legend = d3.select('.legend').append('g')
+    // .attr('transform', 'translate(' + (width / 2) + ', 100)')
+
+    legend.selectAll('rect')
+        .data(subGroups)
+        .enter()
+        .append('rect')
+        .attr('id', (d) => {
+            return d
+        })
+        .attr('class', 'active')
+        .attr('y', 75)
+        .attr('x', (d, i) => {
+            return (width / 2) + i * 200
+        })
+        .attr('width', 20)
+        .attr('height', 20)
+        .attr('fill', (d, i) => {
+            return colors(i)
+        })
+
+    legend.selectAll('text')
+        .data(subGroups)
+        .enter()
+        .append('text')
+        .text((d) => {
+            let text = capitalizeFirstLetter(d) + ' activity'
+            return text
+        })
+        .attr('y', 100)
+        .attr('x', (d, i) => {
+            return (width / 2) + (i * 200) - 50
+        })
+        .attr('text-anchor', 'start')
+        .attr('alignment-baseline', 'hanging')
+
+
+}
+
+function makeLeftChart(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
+    let maxValue = maxVal(data[val].group.map((item) => {
+        return item.total
+    }))
+    makeLeftBars(subGroups, newData, maxValue, groups)
+    makeLegend(subGroups, val)
+}
+
+function makeRightChart(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
+    let maxValue = maxVal(data[val].group.map((item) => {
+        return item.total
+    }))
+    makeRightBars(subGroups, newData, maxValue, groups)
+}
+
+function addSlider() {
+    d3.select('body').on('keypress', (e) => {
+        if (d3.event.keyCode === 114) {
+            d3.selectAll('.page-line').remove()
+        }
+    })
+    d3.selectAll('.graph')
+        .on('click', function (d) {
+            let chart = d3.select('.graph').node().getBoundingClientRect()
+            let bar = d3.select('.graph > g').node().getBoundingClientRect()
+            let mousex = d3.event.pageX - document.querySelector('.graph').getBoundingClientRect().x
+
+            d3.selectAll('.page-line').remove()
+
+            d3.select('.right').append('line')
+                .attr('x1', () => {
+                    if (mousex > chart.width) {
+                        return mousex - chart.width
+                    }
+                    return chart.width - mousex
+                })
+                .attr('x2', () => {
+                    if (mousex > chart.width) {
+                        return mousex - chart.width
+                    }
+                    return chart.width - mousex
+                })
+                .attr('y1', bar.bottom - 350)
+                .attr('y2', bar.top - 350)
+                .attr('stroke-width', '1').style('stroke', 'black')
+                .attr('class', 'page-line')
+                .attr('stroke-dasharray', '10 10')
+
+            d3.select('.right').append('rect')
+                .attr('x', '0')
+                .attr('y', bar.top - 350)
+                .attr('height', (bar.height))
+                .attr('width', () => {
+                    if (mousex > chart.width) {
+                        return mousex - chart.width
+                    }
+                    return chart.width - mousex
+                })
+                .attr('fill', '#9DD3CF')
+                .attr('opacity', '0.4')
+                .attr('class', 'page-line')
+
+            d3.selectAll('.left').append('line')
+                .attr('x1', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+
+            d3.select('.left').append('rect')
+                .attr('x', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+                .attr('y', bar.top - 350)
+                .attr('height', (bar.height))
+                .attr('width', () => {
+                    if (mousex > chart.width) {
+                        return mousex - chart.width
+                    }
+                    return chart.width - mousex
+                })
+                .attr('fill', '#9DD3CF')
+                .attr('opacity', '0.4')
+                .attr('class', 'page-line')
+
+            d3.selectAll('.left').append('line')
+                .attr('x1', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+
+            d3.selectAll('.left').append('line')
+                .attr('x1', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+                .attr('x2', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+                .attr('y1', bar.bottom - 350)
+                .attr('y2', bar.top - 350)
+                .attr('stroke-width', '1').style('stroke', 'black')
+                .attr('class', 'page-line')
+                .attr('stroke-dasharray', '10 10')
+            console.log(chart.width, mousex)
+
+        })
+}
+// =========================================
+// =============Update======================
+// =========================================
+function updateLeft(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
+
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([width / 2, 0])
+
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+
+    let bars = svg
+        .selectAll('g.chart')
+        .data(newData)
+
+    bars
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .transition()
+        .duration(500)
+        .attr('x', (d) => {
+            return x(d[1])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x2 - x1)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    // toggleOptions(val, data)
+}
+
+function updateRight(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
+
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([0, width / 2])
+
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+
+    let bars = svg2
+        .selectAll('g.chart')
+        .data(newData)
+
+    bars
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .transition()
+        .duration(500)
+        .attr('x', (d) => {
+            return x(d[0])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x1 - x2)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    // toggleOptions(val, data)
+}
+
+function toggleOptions(val, data) {
+    let rightVal = d3.select('.select-right option:checked').node().value - 1
+    let leftVal = d3.select('.select-left option:checked').node().value - 1
+    let newData = []
+    let filtered = []
+    d3.select('.legend').selectAll('rect')
+        .on('click', function (d) {
+            let rect = d3.select(this)
+            let id = rect.attr('id')
+
+            if (rect.attr('class') == 'active') {
+                filtered.push(id)
+                rect
+                    .transition()
+                    .duration(350)
+                    .attr('class', 'inactive')
+                // console.log(data)
+                let newDataRight = []
+                let newDataLeft = []
+                filtered.forEach((item) => {
+                    if(newDataRight.length == 0){
+                        newDataRight = filterData(data, item, rightVal)
+                    newDataLeft = filterData(data, item, leftVal)
+                    }
+                    newDataRight = filterData(newDataRight, item, rightVal)
+                    newDataLeft = filterData(newDataLeft, item, leftVal)
+                    switch (item) {
+                        case 'light':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                        case 'medium':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                        case 'heavy':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                    }
+                })
+
+            } else {
+                filtered = filtered.filter(item => item !== id)
+                rect
+                    .transition()
+                    .duration(350)
+                    .attr('class', 'active')
+                    if(filtered.length == 0){
+                        updateRight(rightVal, data)
+                        updateLeft(leftVal, data)
+                    }
+                    let newDataRight = []
+                    let newDataLeft = []
+                    filtered.forEach((item) => {
+                        if(newDataRight.length == 0){
+                            newDataRight = filterData(data, item, rightVal)
+                        newDataLeft = filterData(data, item, leftVal)
+                        }
+                        newDataRight = filterData(newDataRight, item, rightVal)
+                        newDataLeft = filterData(newDataLeft, item, leftVal)
+                        switch (item) {
+                            case 'light':
+                                updateRight(rightVal, newDataRight)
+                                updateLeft(leftVal, newDataLeft)
+                                break;
+                            case 'medium':
+                                updateRight(rightVal, newDataRight)
+                                updateLeft(leftVal, newDataLeft)
+                                break;
+                            case 'heavy':
+                                updateRight(rightVal, newDataRight)
+                                updateLeft(leftVal, newDataLeft)
+                                break;
+                        }
+                    })
+            }
+        })
+}
+
+function maxVal(val) {
+    var max = val.reduce(function (a, b) {
+        return Math.max(a, b)
+    })
+    return max
+}
+
+function getDay(d) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    let date = new Date(d)
+    let day = days[date.getDay()]
+    return day
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
 }

@@ -80,17 +80,16 @@ function bindSelect(data){
 
     d3.select('select').on('change', function (d) {
         let val = d3.select('option:checked').node().value
-        d3.selectAll('.bar').transition().duration(1000).attr('width', '0').on('end', crt)
-        function crt(){
-            d3.selectAll('.bar').remove()
-            d3.selectAll('.tick').remove()
-            makeChart(val, data)
-        }
+        // d3.selectAll('.bar').transition().duration(1000).attr('width', '0').on('end', crt)
+        // function crt(){
+        //     d3.selectAll('.bar').remove()
+        //     d3.selectAll('.tick').remove()
+        //     makeChart(val, data)
+        // }
         
-        // update(val, data)
+        update(val, data)
     })
 }
-
 
 // =========================================
 // =============Bar chart===================
@@ -253,7 +252,7 @@ function makeChart(val, data) {
 // =============Update======================
 // =========================================
 function update(val, data) {
-    d3.selectAll('.bar').transition().duration(1000).attr('width', '0').on('end', updateChart)
+    d3.selectAll('.bar').transition().duration(100).attr('width', '0').on('end', updateChart)
 
     function updateChart() {
         // d3.selectAll('.bar').remove()

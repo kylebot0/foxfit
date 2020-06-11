@@ -1,0 +1,36 @@
+.container-graph{
+    display:flex;
+    flex-direction: row;
+}
+
+.container-legend{
+    z-index: 100;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    background: #DEF5F7;
+}
+.legend{
+    width:100vw;
+}
+
+.graph {
+    border-radius: 0;
+}
+.legend rect:hover {
+    cursor: pointer;
+}
+.graph:hover {
+    cursor: crosshair;
+}
+
+.container-select{
+    display:flex;
+    width: 100vw;
+}
+
+.container-select select{
+    margin: 2em;
+    margin-right: 10em;
+    margin-left: 10em;
+}

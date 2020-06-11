@@ -1,7 +1,119 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+:root {
+  --font-main: 'Roboto', sans-serif;
+  --font-size-light: 300;
+  --font-size-regular: 400;
+  --font-size-bold: 500;
+  
+  --c-blue-dark: rgb(43, 116, 122);
+  --c-blue: #3CC3B8;
+  --c-blue-light: #9DD3CF;
+  --c-blue-lightest: #DEF5F7;
+  --c-white: white;
 }
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding:0;
+  margin: 0;
+  background-color: var(--c-blue-dark);
+  font-family: var(--font-main);
+  color: white;
+}
+
+header {
+  background-color: var(--c-blue);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 4rem;
+  height: 2vh;
+}
+
+main {
+  height: 98vh;
+}
+
+header h1 {
+  font-weight: var(--font-size-regular);
+  color: var(--c-white);
+  text-align: left;
+  flex: 1;
+  min-width: 12rem;
+  font-size: 1.5rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2rem;
+}
+
+header nav ul {
+  display: flex;
+  list-style-type: none;
+  flex-wrap: wrap;
+}
+
+header nav ul li {
+  background-color: var(--c-white);
+  padding: .5rem 1rem;
+  min-width: 10rem;
+  display: flex;
+  justify-content: center;
+  transition: all .1s ease;
+  box-sizing: border-box;
+}
+
+header nav ul .active {
+  background-color: var(--c-blue);
+  color: white;
+  cursor: default;
+  font-weight: var(--font-size-bold);
+  border: 1px solid white;
+}
+
+header nav ul li:hover {
+  background-color: var(--c-blue-dark);
+  color: var(--c-white);
+  font-weight: var(--font-size-bold);
+}
+
+header nav ul .active:hover {
+  background-color: var(--c-blue);
+  color: white;
+}
+
+header nav a {
+  color: var(--c-blue-dark);
+  text-decoration: none;
+  margin-right: 1rem;
+}
+
+header nav ul .about-button {
+  background-color: var(--c-blue-dark);
+  color: var(--c-white);
+}
+
+
+header nav ul .about-button-active {
+  background-color: var(--c-blue);
+  color: white;
+  cursor: default;
+  font-weight: var(--font-size-bold);
+  border: 1px solid white;
+}
+
+header nav ul .about-button-active:hover {
+  background-color: var(--c-blue);
+  cursor: default;
+}
+
+.logo {
+  height: 6rem;
+  position: relative;
+  top: 2rem;
+  left: 1rem;
+}
+
 text {
   font-family: 'Open Sans', sans-serif;
   font-size: 1.5em;
@@ -21,6 +133,7 @@ text {
   transition: all 300ms;
   fill: #d3d3d3;
 }
+
 body{
   padding:0;
   margin: 0;
@@ -181,4 +294,54 @@ animation:move-twink-back 200s linear infinite;
 
 .star.fade {
   opacity: 0;
+}
+
+@media (max-width: 1160px) {
+  header {
+    min-height: 8rem;
+  }
+
+  header nav ul li {
+    margin-bottom: .7rem;
+    min-width: 5rem;
+  }
+
+  .logo {
+    top: 0;
+  }
+}
+
+label {
+  margin: 2rem 1rem 2rem 2rem
+}
+
+#graph-container {
+  width: calc(100vw - 10rem);
+  height: 80vh;
+  margin: 1rem 5rem;
+  box-sizing: border-box;
+}
+
+.graph {
+  background: linear-gradient(#DEF5F7 50%, rgb(237, 250, 252) 50%);
+  border-radius: 10px;
+}
+
+.axis line, .axis .domain {
+  stroke: #9DD3CF;
+  stroke-width: 2;
+}
+
+.bar-divider {
+  stroke: #9DD3CF;
+  stroke-width: 2;
+  stroke-dasharray: none;
+}
+
+text {
+  fill: rgb(19, 95, 89);
+}
+
+.feel-axis-y .tick:last-child, .feel-axis-y .tick:nth-last-child(2) {
+  display: none;
 }

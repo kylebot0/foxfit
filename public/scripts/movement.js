@@ -1,23 +1,29 @@
 const margin = {
-        top: 200,
+        top: 100,
         right: 200,
-        bottom: 150,
+        bottom: 250,
         left: 200
     },
     width = window.innerWidth - margin.left - margin.right,
-    height = 1250 - margin.top - margin.bottom
+    height = window.innerHeight - 250 - margin.top - margin.bottom
 
 let isThereAChart = false
-let isThereALegend = false
 
-const svg = d3.select('body').append('svg')
-    .attr('class', 'graph')
-    .attr('width', width + margin.left + margin.right)
+const svg = d3.select('.svg')
+    .attr('class', 'graph left')
+    .attr('width', (width + margin.left + margin.right) / 2)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
     .attr('transform',
-        'translate(' + margin.left + ',' + margin.top + ')')
+        'translate(180,' + margin.top + ')')
 
+const svg2 = d3.select('.svg2')
+    .attr('class', 'graph right')
+    .attr('width', (width + margin.left + margin.right) / 2)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform',
+        'translate(10,' + margin.top + ')')
 
 // =======================GET DATA================================
 const getUrl = window.location
@@ -58,37 +64,53 @@ function transformData(rawData) {
     })
     return data
 }
+
+function filterData(data, id, val) {
+    const deepCopy = JSON.parse(JSON.stringify(data))
+    let week = deepCopy[val].group
+    week.forEach((d) => {
+        d[id] = 0
+        // delete d[id]
+    })
+    return deepCopy
+}
 // =========================================
 // =============Select option===============
 // =========================================
 init()
 
-async function init(){
+async function init() {
     let rawData = await getData()
-    let transformedData = transformData(rawData)
+    const transformedData = transformData(rawData)
     bindSelect(transformedData)
+    makeRightChart(0, transformedData)
+    makeLeftChart(0, transformedData)
+
+    toggleOptions(0, transformedData)
+    addSlider()
+    d3.select('.select-left').on('change', function (d) {
+        let val = d3.select('.select-left option:checked').node().value
+        val = val - 1
+        updateLeft(val, transformedData)
+        toggleOptions(val, transformedData)
+    })
+    d3.select('.select-right').on('change', function (d) {
+        let val = d3.select('.select-right option:checked').node().value
+        val = val - 1
+        updateRight(val, transformedData)
+        toggleOptions(val, transformedData)
+    })
+
 }
 
-function bindSelect(data){
+function bindSelect(data) {
     data.forEach((item) => {
         let option = 'Week ' + item.week
         let markup = `<option value="${item.week}">${option}</option>`
-        let select = document.querySelector('select')
-        select.insertAdjacentHTML('beforeend', markup)
-    })
-
-    makeChart(1, data)
-
-    d3.select('select').on('change', function (d) {
-        let val = d3.select('option:checked').node().value
-        d3.selectAll('.bar').transition().duration(1000).attr('width', '0').on('end', crt)
-        function crt(){
-            d3.selectAll('.bar').remove()
-            d3.selectAll('.tick').remove()
-            makeChart(val, data)
-        }
-        
-        // update(val, data)
+        let select = document.querySelectorAll('select')
+        select.forEach((e) => {
+            e.insertAdjacentHTML('beforeend', markup)
+        })
     })
 }
 
@@ -120,12 +142,72 @@ function getGroup(val, data) {
     return groups
 }
 
-function makeBars(subGroups, newData, maxValue, groups) {
+function makeRightBars(subGroups, newData, maxValue, groups) {
     const x = d3.scaleLinear()
         .domain([0, 400])
         .nice()
-        .range([0, width])
+        .range([width / 2, 0])
     svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x))
+
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
+    const color = d3.scaleOrdinal()
+        .domain(subGroups)
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
+
+
+
+    let bars = svg.append('g').attr('class', 'bar-group')
+        .selectAll('g')
+        .data(newData)
+        .enter().append('g')
+
+    console.log(bars)
+
+    bars
+        .attr('fill', function (d) {
+            return color(d.key)
+        })
+        .attr('class', (d) => {
+            return d.key + ' chart'
+        })
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .enter().append('rect')
+        .attr('class', (d) => {
+            return 'bar'
+        })
+        .attr('x', (d) => {
+            return x(d[1])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', '0')
+        .transition()
+        .duration(500)
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x2 - x1)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    isThereAChart = true
+}
+
+function makeLeftBars(subGroups, newData, maxValue, groups) {
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([0, width / 2])
+    svg2.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(x))
 
@@ -139,16 +221,16 @@ function makeBars(subGroups, newData, maxValue, groups) {
 
     const color = d3.scaleOrdinal()
         .domain(subGroups)
-        .range(['#1AC6D0', '#15989F', '#382183'])
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
 
 
 
-    let bars = svg.append('g')
+    let bars = svg2.append('g')
         .selectAll('g')
         .data(newData)
         .enter().append('g')
 
-    // console.log(bars)
+    console.log(bars)
 
     bars
         .attr('fill', function (d) {
@@ -173,7 +255,7 @@ function makeBars(subGroups, newData, maxValue, groups) {
         })
         .attr('width', '0')
         .transition()
-        .duration(1000)
+        .duration(500)
         .attr('width', function (d) {
             let x1 = x(d[1])
             let x2 = x(d[0])
@@ -188,11 +270,10 @@ function makeBars(subGroups, newData, maxValue, groups) {
 function makeLegend(subGroups, val) {
     const colors = d3.scaleOrdinal()
         .domain(subGroups)
-        .range(['#1AC6D0', '#15989F', '#382183'])
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
 
-    const legend = d3.select('svg').append('g')
-        .attr('class', 'legend')
-        .attr('transform', 'translate(' + (width / 2) + ', 100)')
+    const legend = d3.select('.legend').append('g')
+    // .attr('transform', 'translate(' + (width / 2) + ', 100)')
 
     legend.selectAll('rect')
         .data(subGroups)
@@ -202,9 +283,9 @@ function makeLegend(subGroups, val) {
             return d
         })
         .attr('class', 'active')
-        .attr('y', 0)
+        .attr('y', 75)
         .attr('x', (d, i) => {
-            return i * 200
+            return (width / 2) + i * 200
         })
         .attr('width', 20)
         .attr('height', 20)
@@ -220,116 +301,306 @@ function makeLegend(subGroups, val) {
             let text = capitalizeFirstLetter(d) + ' activity'
             return text
         })
-        .attr('y', 25)
+        .attr('y', 100)
         .attr('x', (d, i) => {
-            return (i * 200) - 50
+            return (width / 2) + (i * 200) - 50
         })
         .attr('text-anchor', 'start')
         .attr('alignment-baseline', 'hanging')
 
-    legend.selectAll('rect')
-        .on('click', function (d) {
-            let thisRect = this
-            onClick(thisRect, val)
-        })
+
 }
 
-
-function makeChart(val, data) {
+function makeLeftChart(val, data) {
     let subGroups = getSubGroup(val, data)
     let newData = getStackedData(subGroups, val, data)
     let groups = getGroup(val, data)
     let maxValue = maxVal(data[val].group.map((item) => {
         return item.total
     }))
-    makeBars(subGroups, newData, maxValue, groups)
-    if (isThereALegend) {
-        return
-    } else {
-        makeLegend(subGroups, val)
-        isThereALegend = true
-    }
+    makeLeftBars(subGroups, newData, maxValue, groups)
+    makeLegend(subGroups, val)
+}
+
+function makeRightChart(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
+    let maxValue = maxVal(data[val].group.map((item) => {
+        return item.total
+    }))
+    makeRightBars(subGroups, newData, maxValue, groups)
+}
+
+function addSlider() {
+    d3.select('body').on('keypress', (e) => {
+        if (d3.event.keyCode === 114) {
+            d3.selectAll('.page-line').remove()
+        }
+    })
+    d3.selectAll('.graph')
+        .on('click', function (d) {
+            let chart = d3.select('.graph').node().getBoundingClientRect()
+            let bar = d3.select('.graph > g').node().getBoundingClientRect()
+            let mousex = d3.event.pageX - document.querySelector('.graph').getBoundingClientRect().x
+
+            d3.selectAll('.page-line').remove()
+
+            d3.select('.right').append('line')
+                .attr('x1', () => {
+                    if (mousex > chart.width) {
+                        return mousex - chart.width
+                    }
+                    return chart.width - mousex
+                })
+                .attr('x2', () => {
+                    if (mousex > chart.width) {
+                        return mousex - chart.width
+                    }
+                    return chart.width - mousex
+                })
+                .attr('y1', bar.bottom - 350)
+                .attr('y2', bar.top - 350)
+                .attr('stroke-width', '1').style('stroke', 'black')
+                .attr('class', 'page-line')
+                .attr('stroke-dasharray', '10 10')
+
+            d3.select('.right').append('rect')
+                .attr('x', '0')
+                .attr('y', bar.top - 350)
+                .attr('height', (bar.height))
+                .attr('width', () => {
+                    if (mousex > chart.width) {
+                        return mousex - chart.width
+                    }
+                    return chart.width - mousex
+                })
+                .attr('fill', '#9DD3CF')
+                .attr('opacity', '0.4')
+                .attr('class', 'page-line')
+
+            d3.selectAll('.left').append('line')
+                .attr('x1', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+
+            d3.select('.left').append('rect')
+                .attr('x', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+                .attr('y', bar.top - 350)
+                .attr('height', (bar.height))
+                .attr('width', () => {
+                    if (mousex > chart.width) {
+                        return mousex - chart.width
+                    }
+                    return chart.width - mousex
+                })
+                .attr('fill', '#9DD3CF')
+                .attr('opacity', '0.4')
+                .attr('class', 'page-line')
+
+            d3.selectAll('.left').append('line')
+                .attr('x1', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+
+            d3.selectAll('.left').append('line')
+                .attr('x1', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+                .attr('x2', () => {
+                    if (mousex > chart.width) {
+                        return chart.width * 2 - mousex
+                    }
+                    return mousex
+                })
+                .attr('y1', bar.bottom - 350)
+                .attr('y2', bar.top - 350)
+                .attr('stroke-width', '1').style('stroke', 'black')
+                .attr('class', 'page-line')
+                .attr('stroke-dasharray', '10 10')
+            console.log(chart.width, mousex)
+
+        })
 }
 // =========================================
 // =============Update======================
 // =========================================
-function update(val, data) {
-    d3.selectAll('.bar').transition().duration(1000).attr('width', '0').on('end', updateChart)
+function updateLeft(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
 
-    function updateChart() {
-        // d3.selectAll('.bar').remove()
-        // d3.selectAll('.tick').remove()
-        // makeChart(val)
-        let subGroups = getSubGroup(val, data)
-        let newData = getStackedData(subGroups, val, data)
-        let groups = getGroup(val, data)
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([width / 2, 0])
 
-        const x = d3.scaleLinear()
-            .domain([0, 400])
-            .nice()
-            .range([0, width])
-        svg.append('g')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(d3.axisBottom(x))
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
 
-        const y = d3.scaleBand()
-            .range([0, height])
-            .domain(groups)
-        svg.append('g')
-            .call(d3.axisLeft(y).tickFormat((d) => {
-                return getDay(d)
-            }))
+    let bars = svg
+        .selectAll('g.chart')
+        .data(newData)
 
-        let bars = svg.append('g')
-            .selectAll('g')
-            .data(newData)
-            .enter().append('g')
+    bars
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .transition()
+        .duration(500)
+        .attr('x', (d) => {
+            return x(d[1])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x2 - x1)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
 
-        bars
-            .data(function (d) {
-                console.log(d)
-                return d
-            })
-            .enter()
-            .attr('x', (d) => {
-                return x(d[0])
-            })
-            .attr('y', function (d) {
-                return y(d.data.date)
-            })
-            .attr('width', function (d) {
-                let x1 = x(d[1])
-                let x2 = x(d[0])
-                let coords = (x1 - x2)
-                return coords
-            })
-            .attr('height', (y.bandwidth() - 50))
-
-    }
-
+    // toggleOptions(val, data)
 }
 
-function onClick(thisRect) {
-    let rect = d3.select(thisRect)
-    console.log(rect.attr('id'))
-    if (rect.attr('class') == 'active') {
-        rect
-            .transition()
-            .duration(350)
-            .attr('class', 'inactive')
+function updateRight(val, data) {
+    let subGroups = getSubGroup(val, data)
+    let newData = getStackedData(subGroups, val, data)
+    let groups = getGroup(val, data)
 
-        d3.select('.' + rect.attr('id'))
-            .selectAll('.bar')
-            .attr('width', '0')
+    const x = d3.scaleLinear()
+        .domain([0, 400])
+        .nice()
+        .range([0, width / 2])
 
+    const y = d3.scaleBand()
+        .range([0, height])
+        .domain(groups)
 
-    } else {
-        rect
-            .transition()
-            .duration(350)
-            .attr('class', 'active')
+    let bars = svg2
+        .selectAll('g.chart')
+        .data(newData)
 
-    }
+    bars
+        .selectAll('rect')
+        .data(function (d) {
+            return d
+        })
+        .transition()
+        .duration(500)
+        .attr('x', (d) => {
+            return x(d[0])
+        })
+        .attr('y', function (d) {
+            return y(d.data.date)
+        })
+        .attr('width', function (d) {
+            let x1 = x(d[1])
+            let x2 = x(d[0])
+            let coords = (x1 - x2)
+            return coords
+        })
+        .attr('height', (y.bandwidth() - 50))
+
+    // toggleOptions(val, data)
+}
+
+function toggleOptions(val, data) {
+    let rightVal = d3.select('.select-right option:checked').node().value - 1
+    let leftVal = d3.select('.select-left option:checked').node().value - 1
+    let newData = []
+    let filtered = []
+    d3.select('.legend').selectAll('rect')
+        .on('click', function (d) {
+            let rect = d3.select(this)
+            let id = rect.attr('id')
+
+            if (rect.attr('class') == 'active') {
+                filtered.push(id)
+                rect
+                    .transition()
+                    .duration(350)
+                    .attr('class', 'inactive')
+                // console.log(data)
+                let newDataRight = []
+                let newDataLeft = []
+                filtered.forEach((item) => {
+                    if(newDataRight.length == 0){
+                        newDataRight = filterData(data, item, rightVal)
+                    newDataLeft = filterData(data, item, leftVal)
+                    }
+                    newDataRight = filterData(newDataRight, item, rightVal)
+                    newDataLeft = filterData(newDataLeft, item, leftVal)
+                    switch (item) {
+                        case 'light':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                        case 'medium':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                        case 'heavy':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                    }
+                })
+
+            } else {
+                filtered = filtered.filter(item => item !== id)
+                rect
+                    .transition()
+                    .duration(350)
+                    .attr('class', 'active')
+                    if(filtered.length == 0){
+                        updateRight(rightVal, data)
+                        updateLeft(leftVal, data)
+                    }
+                    let newDataRight = []
+                    let newDataLeft = []
+                    filtered.forEach((item) => {
+                        if(newDataRight.length == 0){
+                            newDataRight = filterData(data, item, rightVal)
+                        newDataLeft = filterData(data, item, leftVal)
+                        }
+                        newDataRight = filterData(newDataRight, item, rightVal)
+                        newDataLeft = filterData(newDataLeft, item, leftVal)
+                        switch (item) {
+                            case 'light':
+                                updateRight(rightVal, newDataRight)
+                                updateLeft(leftVal, newDataLeft)
+                                break;
+                            case 'medium':
+                                updateRight(rightVal, newDataRight)
+                                updateLeft(leftVal, newDataLeft)
+                                break;
+                            case 'heavy':
+                                updateRight(rightVal, newDataRight)
+                                updateLeft(leftVal, newDataLeft)
+                                break;
+                        }
+                    })
+            }
+        })
 }
 
 function maxVal(val) {

@@ -134,6 +134,168 @@ text {
   fill: #d3d3d3;
 }
 
+body{
+  padding:0;
+  margin: 0;
+}
+
+.planets {
+  background-color:#4a4a49;
+}
+
+.planets {
+  color: #fff;
+}
+
+.planets {
+  max-height: 100vh;
+}
+.planets #grid {
+  display: flex;
+  justify-content: space-around;
+}
+.planets #grid img {
+  max-width: 100%;
+  height: 100px;
+  display: block;
+}
+
+.planets #grid img.outline {
+  filter: invert(1);
+}
+
+.planets #grid div:nth-last-of-type(2n + 2) {margin-top:25vh;}
+
+.planets #grid div:nth-last-of-type(2n + 1) {margin-top:45vh;}
+
+.planets #grid div {
+  display: flex;
+  flex-direction: column;
+}
+.planets #grid div .trophy {
+  width: auto;
+  height: 30px;
+  margin: 10px auto;
+}
+
+@keyframes move-twink-back {
+  from {background-position:0 0;}
+  to {background-position:-10000px 5000px;}
+}
+@-webkit-keyframes move-twink-back {
+  from {background-position:0 0;}
+  to {background-position:-10000px 5000px;}
+}
+@-moz-keyframes move-twink-back {
+  from {background-position:0 0;}
+  to {background-position:-10000px 5000px;}
+}
+@-ms-keyframes move-twink-back {
+  from {background-position:0 0;}
+  to {background-position:-10000px 5000px;}
+}
+
+@keyframes move-clouds-back {
+  from {background-position:0 0;}
+  to {background-position:10000px 0;}
+}
+@-webkit-keyframes move-clouds-back {
+  from {background-position:0 0;}
+  to {background-position:10000px 0;}
+}
+@-moz-keyframes move-clouds-back {
+  from {background-position:0 0;}
+  to {background-position:10000px 0;}
+}
+@-ms-keyframes move-clouds-back {
+  from {background-position: 0;}
+  to {background-position:10000px 0;}
+}
+
+.stars, .twinkling, .clouds {
+position:absolute;
+top:0;
+left:0;
+right:0;
+bottom:0;
+width:100%;
+height:100%;
+display:block;
+}
+
+.stars {
+background:#000 url(http://www.script-tutorials.com/demos/360/images/stars.png) repeat top center;
+z-index:-1;
+}
+
+.twinkling{
+background:transparent url(http://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
+z-index: 1;
+-moz-animation:move-twink-back 200s linear infinite;
+-ms-animation:move-twink-back 200s linear infinite;
+-o-animation:move-twink-back 200s linear infinite;
+-webkit-animation:move-twink-back 200s linear infinite;
+animation:move-twink-back 200s linear infinite;
+}
+
+.rocket img:not(.star){
+  width: 80px;
+  position: absolute;
+  top:0;left:0;
+}
+.rocket.transition img:not(.star) {transition: all 4s ease-in-out;}
+
+.rocket.planet-1 img:not(.star) {
+  top: 42vh;
+  left: 7%;
+  transform: rotate(0deg);
+}
+
+.rocket.planet-2 img:not(.star) {
+  top: 35vh;
+  left: 21%;
+  transform: rotate(60deg);
+}
+
+.rocket.planet-3 img:not(.star) {
+  top: 47vh;
+  left: 36%;
+  transform: rotate(-20deg);
+}
+
+.rocket.planet-4 img:not(.star) {
+  top: 35vh;
+  left: 50%;
+  transform: rotate(40deg);
+}
+
+.rocket.planet-5 img:not(.star) {
+  top: 47vh;
+  left: 65%;
+  transform: rotate(0deg);
+}
+
+.rocket.planet-6 img:not(.star) {
+  top: 34vh;
+  left: 79%;
+  transform: rotate(30deg);
+}
+
+.rocket.planet-7 img:not(.star) {
+  top: 39vh;
+  left: 93%;
+  transform: rotate(0deg);
+}
+
+.star{
+  position:absolute;
+  transition: top .5s linear, left .5s linear, opacity .2s;
+}
+
+.star.fade {
+  opacity: 0;
+}
+
 @media (max-width: 1160px) {
   header {
     min-height: 8rem;

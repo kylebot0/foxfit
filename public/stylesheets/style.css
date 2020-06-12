@@ -27,6 +27,8 @@ header {
   align-items: center;
   min-height: 4rem;
   height: 2vh;
+  position: relative;
+  z-index: 2;
 }
 
 main {

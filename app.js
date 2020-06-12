@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 
 const indexRouter = require('./routes/index')
-const movementRouter = require('./routes/movement')
 const dataRouter = require('./routes/data')
 const dayGoalRouter = require('./routes/daygoal')
 const planetsRouter = require('./routes/planets')

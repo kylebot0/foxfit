@@ -211,7 +211,7 @@ function makeRightBars(subGroups, newData, maxValue, groups) {
             let coords = (x2 - x1)
             return coords
         })
-        .attr('height', (y.bandwidth() - 50))
+        .attr('height', (y.bandwidth() - 15))
 
     isThereAChart = true
 }
@@ -276,7 +276,7 @@ function makeLeftBars(subGroups, newData, maxValue, groups) {
             let coords = (x1 - x2)
             return coords
         })
-        .attr('height', (y.bandwidth() - 50))
+        .attr('height', (y.bandwidth() - 15))
 
     isThereAChart = true
 }
@@ -490,7 +490,7 @@ function updateLeft(val, data) {
             let coords = (x2 - x1)
             return coords
         })
-        .attr('height', (y.bandwidth() - 50))
+        .attr('height', (y.bandwidth() - 15))
 
     // toggleOptions(val, data)
 }
@@ -532,7 +532,7 @@ function updateRight(val, data) {
             let coords = (x1 - x2)
             return coords
         })
-        .attr('height', (y.bandwidth() - 50))
+        .attr('height', (y.bandwidth() - 15))
 
     // toggleOptions(val, data)
 }

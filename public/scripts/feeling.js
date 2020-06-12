@@ -39,23 +39,22 @@ getData().then(data => {
     const selectedWeekNr = weekSelectElement.selectedIndex
     const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
     const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
-    const averageFeel = getAverageFeel(data.daily)
 
-    createGraphs(pamDataForWeek, dailyDataForWeek, averageFeel)
+    createGraphs(pamDataForWeek, dailyDataForWeek)
 
     weekSelectElement.addEventListener('change', (event) => { 
         const selectedWeekNr = event.target.selectedIndex
         const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
         const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
 
-        createGraphs(pamDataForWeek, dailyDataForWeek, averageFeel)
-        // updateFeelingGraph(pamDataForWeek, dailyDataForWeek, averageFeel)
+        // createGraphs(pamDataForWeek, dailyDataForWeek)
+        updateMovementGraph(pamDataForWeek)
     })
 })
 
 // GRAPH FUNCTIONS
 
-function createGraphs(pamData, dailyData, averageFeel) {
+function createGraphs(pamData, dailyData) {
     // clear container (remove when update function is finished)
     getters.container.getElement().innerHTML = ''
 
@@ -70,7 +69,7 @@ function createGraphs(pamData, dailyData, averageFeel) {
         .attr('class', 'graph')
 
     createMovementGraph(svg, pamData)
-    createFeelingGraph(svg, dailyData, averageFeel)
+    createFeelingGraph(svg, dailyData)
 }
 
 function createMovementGraph(svg, pamData) {
@@ -88,7 +87,9 @@ function createMovementGraph(svg, pamData) {
     const xAxis = d3.axisBottom(x).ticks(0).tickFormat('').tickSize(0)
     const yAxis = d3.axisLeft(y).ticks(9).tickPadding(10).tickSize(2)
 
-    const chartGroup = svg.append('g').attr('transform', `translate(${settings.margins.left}, ${settings.margins.top})`)
+    const chartGroup = svg.append('g')
+        .attr('transform', `translate(${settings.margins.left}, ${settings.margins.top})`)
+        .attr('id', 'chart-group-movement')
 
     chartGroup.append('g')
         .attr('class','axis y')
@@ -99,41 +100,67 @@ function createMovementGraph(svg, pamData) {
         .attr('transform', `translate(0, ${getters.movementGraph.getHeight()})`)
         .call(xAxis)
 
+    updateMovementGraph(pamData)
+}
+
+function updateMovementGraph(pamData) {
+    const chartGroup = d3.select('#chart-group-movement')
+
+    const x = d3.scaleBand()
+        .domain(pamData.map(d => new Date(d.date)))
+        .range([0, getters.movementGraph.getWidth()])
+        .paddingInner(0.2)
+        .paddingOuter(0.2)
+
+    const y = d3.scaleLinear()
+        .domain([0, 400])
+        .range([getters.movementGraph.getHeight(), 0])
+
+    const selectedBarLightElements = 
     chartGroup.selectAll('.bar-light')
         .data(pamData)
-        .enter().append('rect')
+
+    const selectedBarMediumElements = 
+    chartGroup.selectAll('.bar-medium')
+        .data(pamData)
+
+    const selectedBarHeavyElements = 
+    chartGroup.selectAll('.bar-heavy')
+        .data(pamData)
+
+    selectedBarLightElements
+        .enter().append('rect').merge(selectedBarLightElements)
         .attr('class', 'bar-light')
         .style('fill', '#9DD3CF')
         .attr('x', function(d) { return x(new Date(d.date)) })
         .attr('width', x.bandwidth())
         .attr('y', function(d) { return y(d.light_activity) })
         .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.light_activity) })
+        .exit().remove()
 
-    chartGroup.selectAll('.bar-medium')
-        .data(pamData)
-        .enter().append('rect')
+    selectedBarMediumElements
+        .enter().append('rect').merge(selectedBarMediumElements)
         .attr('class', 'bar-medium')
         .style('fill', '#3CC3B8')
         .attr('x', function(d) { return x(new Date(d.date)) })
         .attr('width', x.bandwidth())
         .attr('y', function(d) { return y(d.medium_activity + d.light_activity) })
         .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.medium_activity) })
+        .exit().remove()
 
-    chartGroup.selectAll('.bar-heavy')
-        .data(pamData)
-        .enter().append('rect')
+    selectedBarHeavyElements
+        .enter().append('rect').merge(selectedBarHeavyElements)
         .attr('class', 'bar-heavy')
         .style('fill', '#249E93')
         .attr('x', function(d) { return x(new Date(d.date)) })
         .attr('width', x.bandwidth())
         .attr('y', function(d) { return y(d.heavy_activity + d.medium_activity + d.light_activity) })
         .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.heavy_activity) })
+        .exit().remove()
 }
 
-
-function createFeelingGraph(svg, dailyData, averageFeel) {
+function createFeelingGraph(svg, dailyData) {
     console.log(dailyData)
-    const averageFeelForThisWeek = d3.mean(dailyData, (d) => { return d3.mean([d.morningfeel, d.eveningfeel], d => d < 0 ? 'not valid' : d ) })
 
     const x = d3.scaleBand()
         .domain(dailyData.map(d => new Date(d.date)))
@@ -203,31 +230,6 @@ function createFeelingGraph(svg, dailyData, averageFeel) {
         .attr('width', x.bandwidth() / 2)
         .attr('y', function(d) { return y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
         .attr('height', function(d) { return getters.feelingGraph.getHeight() - y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
-    
-    chartGroup.append('line')
-        .attr('class', 'baseline')
-        .attr('x1', 0)
-        .attr('y1', y(averageFeelForThisWeek))
-        .attr('x2', getters.feelingGraph.getWidth())
-        .attr('y2', y(averageFeelForThisWeek))
-        .attr('stroke-width', 1)
-        .attr('stroke', '#197068')
-
-    chartGroup.append('line')
-        .attr('class', 'total-average')
-        .attr('x1', 0)
-        .attr('y1', y(averageFeel))
-        .attr('x2', getters.feelingGraph.getWidth())
-        .attr('y2', y(averageFeel))
-        .attr('stroke-width', 1)
-        .attr('stroke', '#197068')
-        .attr('stroke-dasharray', 4)
-
-}
-
-
-function updateMovementGraph(pamData) {
-    console.log(pamData)    
 }
 
 // MAIN FUNCTIONS
@@ -252,12 +254,6 @@ function getDayDifference(date1, date2) {
     const diffTime = Math.abs(date1 - date2)
     let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
     return date2 < date1 ? diffDays * -1 : diffDays
-}
-
-function getAverageFeel(data) {
-    return d3.mean(data, (d) => {
-        return d3.mean([d.morningfeel, d.eveningfeel], d => d < 0 ? 'not valid' : d )
-    })
 }
 
 // CHECKER FUNCTIONS

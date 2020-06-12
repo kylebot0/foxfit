@@ -68,7 +68,9 @@ function createChart(data) {
     svg.append('g')
         .attr('class', 'x-axis')
         .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x).tickFormat((d) => {
+            return getDay(d)
+        }))
         .selectAll('text')
         .style('text-anchor', 'end')
         .attr('dx', '-.8em')
@@ -135,7 +137,9 @@ function updateChart(data) {
 
     svg.selectAll('.x-axis')
         .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x))
+        .call(d3.axisBottom(x).tickFormat((d) => {
+            return getDay(d)
+        }))
         .selectAll('text')
         .style('text-anchor', 'end')
         .attr('dx', '-.8em')
@@ -144,3 +148,9 @@ function updateChart(data) {
 }
 
 
+function getDay(d) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    let date = new Date(d)
+    let day = days[date.getDay()]
+    return day
+}

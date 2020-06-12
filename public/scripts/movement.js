@@ -89,9 +89,8 @@ async function init() {
     toggleOptions(0, transformedData)
     addSlider()
     d3.select('.select-left').on('change', function (d) {
-        let val = d3.select('.select-left option:checked').node().value
-        let rightVal = d3.select('.select-right option:checked').node().value
-        val = val - 1
+        let val = d3.select('.select-left option:checked').node().value - 1
+        let rightVal = d3.select('.select-right option:checked').node().value - 1
 
         d3.selectAll('.legend rect')
         .transition()
@@ -103,9 +102,8 @@ async function init() {
         toggleOptions(val, transformedData)
     })
     d3.select('.select-right').on('change', function (d) {
-        let val = d3.select('.select-right option:checked').node().value
-        let leftVal = d3.select('.select-left option:checked').node().value
-        val = val - 1
+        let val = d3.select('.select-right option:checked').node().value - 1
+        let leftVal = d3.select('.select-left option:checked').node().value - 1
 
         d3.selectAll('.legend rect')
         .transition()

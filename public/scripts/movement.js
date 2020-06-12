@@ -91,7 +91,6 @@ async function init() {
     d3.select('.select-left').on('change', function (d) {
         let val = d3.select('.select-left option:checked').node().value - 1
         let rightVal = d3.select('.select-right option:checked').node().value - 1
-        val = val - 1
 
         d3.selectAll('.legend rect')
         .transition()

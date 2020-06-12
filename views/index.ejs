@@ -1,15 +1,28 @@
 <!DOCTYPE html>
 <html lang="nl">
-  <% include partials/head.ejs %>
+<% include partials/head.ejs %>
+
 <body>
   <% include partials/header.ejs %>
   <main>
+    <div id="userdata-container">
+      <h2>Gegevens</h2>
+      <ul class="userdatalist">
+        <li>
+          ID: <span id="username" class="userdata"></span>
+        </li>
+        <li>
+          pam ID: <span id="pamid" class="userdata"></span>
+        </li>
+        <li>
+          Startdatum: <span id="startdate" class="userdata"></span>
+        </li>
+      </ul>
+      <h2>Dagdoelen</h2>
+      <ul id="daygoals" class="userdatalist">
+      </ul>
+    </div>
   </main>
-  <footer>
-    <small>
-      Deze applicatie is gemaakt door Kyle Bot, Giovanni Kaaijk en Lennart de Knikker
-    </small>
-  </footer>
   <script src="/scripts/index.js"></script>
 </body>
 

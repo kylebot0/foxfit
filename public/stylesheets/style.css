@@ -1,8 +1,8 @@
 :root {
   --font-main: 'Roboto', sans-serif;
-  --font-size-light: 300;
-  --font-size-regular: 400;
-  --font-size-bold: 500;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-bold: 500;
   
   --c-blue-dark: rgb(43, 116, 122);
   --c-blue: #3CC3B8;
@@ -29,6 +29,7 @@ header {
   height: 2vh;
   position: relative;
   z-index: 2;
+  margin: 0 0 5rem 0;
 }
 
 main {
@@ -36,7 +37,7 @@ main {
 }
 
 header h1 {
-  font-weight: var(--font-size-regular);
+  font-weight: var(--font-weight-regular);
   color: var(--c-white);
   text-align: left;
   flex: 1;
@@ -69,14 +70,14 @@ header nav ul .active {
   background-color: var(--c-blue);
   color: white;
   cursor: default;
-  font-weight: var(--font-size-bold);
+  font-weight: var(--font-weight-bold);
   border: 1px solid white;
 }
 
 header nav ul li:hover {
   background-color: var(--c-blue-dark);
   color: var(--c-white);
-  font-weight: var(--font-size-bold);
+  font-weight: var(--font-weight-bold);
 }
 
 header nav ul .active:hover {
@@ -100,7 +101,7 @@ header nav ul .about-button-active {
   background-color: var(--c-blue);
   color: white;
   cursor: default;
-  font-weight: var(--font-size-bold);
+  font-weight: var(--font-weight-bold);
   border: 1px solid white;
 }
 
@@ -139,6 +140,27 @@ text {
 body{
   padding:0;
   margin: 0;
+}
+
+h2 {
+  font-weight: var(--font-weight-regular);
+}
+
+#userdata-container {
+  padding: 0 2rem;
+}
+
+.userdatalist {
+  list-style-type: none;
+  font-weight: var(--font-weight-bold);
+}
+
+.userdatalist li {
+  padding: .1rem 0;
+}
+
+.userdata {
+  font-weight: var(--font-weight-regular);
 }
 
 .planets {

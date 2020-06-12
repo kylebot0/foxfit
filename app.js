@@ -9,6 +9,7 @@ const dataRouter = require('./routes/data')
 const dayGoalRouter = require('./routes/daygoal')
 const planetsRouter = require('./routes/planets')
 const feelingRouter = require('./routes/feeling')
+const movementRouter = require('./routes/movement')
 
 const app = express()
 

@@ -12,6 +12,7 @@ async function fetchData() {
                 5: res.data.trophyData.trofee5,
                 6: res.data.trophyData.trofee6
             }
+            console.log(res)
             return data
         })
 }
@@ -33,7 +34,6 @@ function createPlanets(trophy, planets) {
         let sourceVar = ''
         let className = ''
         let collectedTrophySource
-        console.log(trophy[singleTrophy])
         if(trophy[singleTrophy] === 0) {
             sourceVar = '/' + planets[i] + '/outline.png'
             className = 'outline'
@@ -50,9 +50,10 @@ function createPlanets(trophy, planets) {
         } else if(trophy[singleTrophy] === 1) {
             collectedTrophySource = '/bronze.svg'
         }
-        wrapper.insertAdjacentHTML('beforeend', `<div>${collectedTrophySource === false ? '' : `<img class="trophy" src="${collectedTrophy + collectedTrophySource}" />`}<img class="${className}" src="${source + sourceVar}" /></div>`)
+        wrapper.insertAdjacentHTML('beforeend', `<div>${collectedTrophySource === false ? '' : `<img class="trophy" src="${collectedTrophy + collectedTrophySource}" />`}<img class="${className}" data-trophy="${singleTrophy}" src="${source + sourceVar}" /></div>`)
     })
     placeRocket(latestTrophy)
+    addPlanetEvents()
 }
 
 function placeRocket(latestTrophy) {
@@ -72,11 +73,9 @@ function placeRocket(latestTrophy) {
 let positionsTop = [0,0]
 
 function generateStars() {
-    console.log(latestTrophy)
     const rocketWrapper = document.querySelector('.rocket')
     const rocket = document.querySelector('.rocket img')
     positionsTop[0] = formatTop(getComputedStyle(rocket).top)
-    console.log(positionsTop[0])
     if(positionsTop[1] !== 0) {
         let newStar = document.createElement('img')
         const randomTop = (positionsTop[1] + 30) + Math.floor(Math.random() * 70)
@@ -113,6 +112,34 @@ function formatLeft(left) {
     let newLeft = left.toString()
     newLeft = parseInt(newLeft.substring(0, newLeft.length - 2))
     return newLeft
+}
+
+function addPlanetEvents() {
+    const barWrapper = document.querySelector('.bar-wrapper')
+    const planets = document.querySelectorAll('#grid > div:not(:first-of-type) img.full:last-of-type')
+    
+    planets.forEach(planet => {
+        planet.addEventListener('click', function (e) {
+            addOverlayData(this)
+
+            barWrapper.style.left = e.clientX + 'px'
+            barWrapper.style.top = e.clientY + 'px'
+            barWrapper.classList.add('show')
+            setTimeout(() => {
+                barWrapper.style.left = '0px'
+                barWrapper.style.top = '0px'
+            }, 100);
+            
+        })
+    })
+
+    document.querySelector('.cross').addEventListener('click', function () {
+        barWrapper.classList.remove('show')
+    })
+}
+
+function addOverlayData(planet) {
+
 }
 
 generatePlanets()

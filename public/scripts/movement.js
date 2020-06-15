@@ -320,7 +320,7 @@ function makeLegend(subGroups, val) {
             return colors(i)
         })
 
-        legend.append('g').selectAll('.vinkje')
+    legend.append('g').selectAll('.vinkje')
         .data(subGroups)
         .enter()
         .append('line')
@@ -338,8 +338,8 @@ function makeLegend(subGroups, val) {
         })
         .attr('stroke-width', 2)
         .attr('stroke', 'rgb(43, 116, 122)')
-        
-        legend.append('g').selectAll('.vinkje2')
+
+    legend.append('g').selectAll('.vinkje2')
         .data(subGroups)
         .enter()
         .append('line')
@@ -562,7 +562,7 @@ function updateRight(val, data) {
     const y = d3.scaleBand()
         .range([0, height])
         .domain(groups)
-        svg2.select('.y-axis-right')
+    svg2.select('.y-axis-right')
         .attr('transform', 'translate(' + width / 2 + ', 0)')
         .attr('class', 'y-axis-right')
         .call(d3.axisRight(y).tickFormat((d) => {
@@ -612,7 +612,7 @@ function toggleOptions(val, data) {
             if (rect.attr('class') == 'active') {
                 filtered.push(id)
                 line
-                .transition()
+                    .transition()
                     .duration(350)
                     .attr('class', 'inactive-line')
                 rect
@@ -648,7 +648,7 @@ function toggleOptions(val, data) {
             } else {
                 filtered = filtered.filter(item => item !== id)
                 line
-                .transition()
+                    .transition()
                     .duration(350)
                     .attr('class', '')
                 rect
@@ -717,7 +717,7 @@ function onDateHover() {
         div.html('<h2>' + day + '</h2>')
             .style("left", () => {
                 let x = 0
-                if(d3.event.pageX > chart.width){
+                if (d3.event.pageX > chart.width) {
                     x = -130
                 } else {
                     x = 30
@@ -730,9 +730,16 @@ function onDateHover() {
     console.log()
 }
 
-function addLabel(){
+function addLabel() {
     svg.append('text').style('text-anchor', 'middle')
-    .style('font-size', '1rem').text('Beweging (minuten)').attr('transform',`translate(-${settings.margins.left / 2 + 4 }, ${getters.movementGraph.getHeight() / 2}) rotate(270)`)
+        .style('font-size', '1rem')
+        .text('Beweging (minuten)')
+        .attr('transform', `translate(${width / 4}, ${height + 50})`)
+        
+        svg2.append('text').style('text-anchor', 'middle')
+        .style('font-size', '1rem')
+        .text('Beweging (minuten)')
+        .attr('transform', `translate(${width / 4}, ${height + 50})`)
 }
 
 function maxVal(val) {

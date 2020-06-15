@@ -316,18 +316,17 @@ function handleMouseOver(chartGroup, object, color, textValue, labelText) {
 
     chartGroup
         .append('text')
-        .attr('class', 'tooltip')
+        .attr('class', 'bar-label')
         .style('text-anchor', 'middle')
         .style('font-size', '1rem')
-        .attr('x', x)
-        .attr('y', labelY)
-        .attr('text-color', 'white')
+        .attr('transform', `translate(${x}, ${labelY}) rotate(270)`)
         .text(labelText)
 
 }
 function handleMouseOut(chartGroup, object, color) {
     d3.select(object).transition().duration(100).style('fill', color)
     chartGroup.selectAll('.tooltip').remove()
+    chartGroup.selectAll('.bar-label').remove()
 }
 
 // MAIN FUNCTIONS

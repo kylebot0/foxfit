@@ -402,9 +402,13 @@ text {
 }
 
 .planets .bar-wrapper.show .cross:before {
-  transform:rotate(45deg)
+  transform:rotate(45deg);
 }
 
 .planets .bar-wrapper.show .cross:after {
-  transform:rotate(-45deg)
+  transform:rotate(-45deg);
+}
+
+.bar-label {
+  fill: white;
 }

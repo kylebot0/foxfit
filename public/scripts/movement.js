@@ -294,6 +294,11 @@ function makeLeftBars(subGroups, newData, maxValue, groups) {
 }
 
 function makeLegend(subGroups, val) {
+
+    const windowWidth = window.innerWidth
+    const legendTexts = ['lichte beweging', 'medium beweging', 'zware beweging']
+    const topPosition = -20
+
     const colors = d3.scaleOrdinal()
         .domain(subGroups)
         .range(['#9dd3cf', '#3cc3b8', '#249e93'])
@@ -308,9 +313,10 @@ function makeLegend(subGroups, val) {
             return d
         })
         .attr('class', 'active')
-        .attr('y', 40)
+        .attr('y', 40 + topPosition)
         .attr('x', (d, i) => {
-            return (width / 2) + i * 187
+            if (i === 0) return (windowWidth / 2) - 200 - 10
+            return (windowWidth / 2) + (i-1) * 200 - 10
         })
         .attr('width', 20)
         .attr('height', 20)
@@ -328,13 +334,16 @@ function makeLegend(subGroups, val) {
             return d
         })
         .attr('class', 'vinkje')
-        .attr('y1', 50)
-        .attr('y2', 55)
+        .attr('y1', 50 + topPosition)
+        .attr('y2', 55 + topPosition)
         .attr('x1', (d, i) => {
-            return (width / 2) + i * 187 + 5
+            
+            if (i === 0) return (windowWidth / 2) - 200 -5
+            return (windowWidth / 2) + (i-1) * 200 -5
         })
         .attr('x2', (d, i) => {
-            return (width / 2) + i * 187 + 10
+            if (i === 0) return (windowWidth / 2) - 200 
+            return (windowWidth / 2) + (i-1) * 200
         })
         .attr('stroke-width', 2)
         .attr('stroke', 'rgb(43, 116, 122)')
@@ -347,13 +356,15 @@ function makeLegend(subGroups, val) {
             return d
         })
         .attr('class', 'vinkje2')
-        .attr('y1', 55)
-        .attr('y2', 43)
+        .attr('y1', 55 + topPosition)
+        .attr('y2', 43 + topPosition)
         .attr('x1', (d, i) => {
-            return (width / 2) + i * 187 + 10
+            if (i === 0) return (windowWidth / 2) - 200 
+            return (windowWidth / 2) + (i-1) * 200
         })
         .attr('x2', (d, i) => {
-            return (width / 2) + i * 187 + 17
+            if (i === 0) return (windowWidth / 2) - 200 + 7
+            return (windowWidth / 2) + (i-1) * 200 + 7
         })
         .attr('stroke-width', 2)
         .attr('stroke', 'rgb(43, 116, 122)')
@@ -363,19 +374,17 @@ function makeLegend(subGroups, val) {
         .data(subGroups)
         .enter()
         .append('text')
-        .text((d) => {
-            let text = capitalizeFirstLetter(d) + ' activiteit'
-            return text
+        .text((d, i) => {
+            return legendTexts[i]
         })
-        .attr('y', 65)
+        .attr('y', 65 + topPosition)
         .attr('x', (d, i) => {
-            if(i == 2){
-                return (width / 2) + (i * 180) - 45
-            }
-            return (width / 2) + (i * 180) - 55
+            if (i === 0) return (windowWidth / 2) - 200
+            return (windowWidth / 2) + (i-1) * 200
         })
-        .attr('text-anchor', 'start')
+        .attr('text-anchor', 'middle')
         .attr('alignment-baseline', 'hanging')
+        .style('font-size', '1rem')
 }
 
 function makeLeftChart(val, data) {

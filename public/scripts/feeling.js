@@ -388,6 +388,8 @@ function makeLegend() {
     const subGroups = ['licht', 'medium', 'zwaar']
     const legendTexts = ['lichte beweging', 'medium beweging', 'zware beweging']
     const width = window.innerWidth
+    const topPosition = -20
+
     const colors = d3.scaleOrdinal()
         .domain(subGroups)
         .range(['#9dd3cf', '#3cc3b8', '#249e93'])
@@ -405,14 +407,14 @@ function makeLegend() {
             document.getElementById(d).click()
             
         })
-        .attr('y', 40)
+        .attr('y', 40 + topPosition)
         .attr('x', (d, i) => {
             return (width / 2) + i * 200 - 200
         })
 
     legendGroup.append('rect')
         .attr('class', 'checkbox')
-        .attr('y', 40)
+        .attr('y', 40 + topPosition)
         .attr('x', (d, i) => {
             return (width / 2) + i * 200 - 200 - 10
         })
@@ -427,8 +429,8 @@ function makeLegend() {
     legendGroup
         .append('line')
         .attr('class', 'vinkje')
-        .attr('y1', 50)
-        .attr('y2', 55)
+        .attr('y1', 50 + topPosition)
+        .attr('y2', 55 + topPosition)
         .attr('x1', (d, i) => {
             return (width / 2) + i * 200 - 5 - 200
         })
@@ -441,8 +443,8 @@ function makeLegend() {
     legendGroup
         .append('line')
         .attr('class', 'vinkje')
-        .attr('y1', 55)
-        .attr('y2', 43)
+        .attr('y1', 55 + topPosition)
+        .attr('y2', 43 + topPosition)
         .attr('x1', (d, i) => {
             return (width / 2) + i * 200 - 200
         })
@@ -456,12 +458,13 @@ function makeLegend() {
         .text((d, i) => {
             return legendTexts[i]
         })
-        .attr('y', 65)
+        .attr('y', 70 + topPosition)
         .attr('x', (d, i) => {
             return (width / 2) + (i * 200) - 200
         })
         .attr('text-anchor', 'middle')
         .attr('alignment-baseline', 'hanging')
+        .style('font-size', '1rem')
 }
 
 // MAIN FUNCTIONS

@@ -14,7 +14,7 @@
 body {
   padding:0;
   margin: 0;
-  background-color: var(--c-blue-dark);
+  background-color: var(--c-blue-lightest);
   font-family: var(--font-main);
   color: white;
   overflow: hidden;
@@ -28,13 +28,13 @@ header {
   min-height: 4rem;
   height: 2vh;
   position: relative;
-  z-index: 2;
+  z-index: 3;
   margin: 0;
 }
 
 main {
   height: 89vh;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
@@ -135,6 +135,7 @@ text {
   display: flex;
   justify-content: center;
   height: 9rem;
+  background-color: var(--c-blue-dark);
 }
 
 #weeks {
@@ -280,12 +281,12 @@ display:block;
 
 .stars {
 background:#000 url(http://www.script-tutorials.com/demos/360/images/stars.png) repeat top center;
-z-index:-1;
+z-index:1;
 }
 
 .twinkling{
 background:transparent url(http://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
-z-index: 1;
+z-index: 2;
 -moz-animation:move-twink-back 200s linear infinite;
 -ms-animation:move-twink-back 200s linear infinite;
 -o-animation:move-twink-back 200s linear infinite;
@@ -298,7 +299,7 @@ animation:move-twink-back 200s linear infinite;
   position: absolute;
   top:0;left:0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 .rocket.transition img:not(.star) {transition: all 4s ease-in-out;}
 
@@ -366,7 +367,7 @@ label {
 
 #graph-container {
   width: 100vw;
-  height: 80vh;
+  height: 60vh;
   box-sizing: border-box;
 
 }
@@ -520,15 +521,17 @@ pointer-events: none;}
   flex-direction: column;
   padding-bottom: 1rem;
   height: 8rem;
+  background-color: var(--c-blue-dark);
 }
 
 #feeling-legend {
   width: 100vw;
   background-color: var(--c-blue-lightest);
+  height: 5rem;
 }
 
 #legend-container {
-  height: 8rem;
+  height: 5rem;
 }
 
 footer {

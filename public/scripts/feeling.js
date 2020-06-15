@@ -260,6 +260,13 @@ function updateFeelingGraph(dailyData) {
     
     selectedBarMorningElements.exit().remove()
     selectedBarMorningElements.enter().append('rect').merge(selectedBarMorningElements)
+        .on('mouseover', function(d) {
+            handleMouseOver(chartGroup, this, 'rgb(26, 71, 75)', d.morningfeel <= 0 ? 0 : d.morningfeel, 'ochtend' )
+        })
+        .on('mouseout', function(d) {
+            const color = d.morningfeel < 0 ? 'white' : '#9DD3CF'
+            handleMouseOut(chartGroup, this, color)
+        })     
         .attr('class', 'bar-morning')
         .attr('x', function(d) { return x(new Date(d.date)) })
         .attr('width', x.bandwidth() / 2)
@@ -271,6 +278,13 @@ function updateFeelingGraph(dailyData) {
 
     selectedBarEveningElements.exit().remove()    
     selectedBarEveningElements.enter().append('rect').merge(selectedBarEveningElements)
+        .on('mouseover', function(d) {
+            handleMouseOver(chartGroup, this, 'rgb(26, 71, 75)', d.eveningfeel <= 0 ? 0 : d.eveningfeel, 'avond')
+        })
+        .on('mouseout', function(d) {
+            const color = d.eveningfeel < 0 ? 'white' : '#249E93'
+            handleMouseOut(chartGroup, this, color)
+        })     
         .attr('class', 'bar-evening')
         .attr('x', function(d) { return x(new Date(d.date)) + x.bandwidth() / 2 })
         .attr('width', x.bandwidth() / 2)
@@ -279,6 +293,41 @@ function updateFeelingGraph(dailyData) {
         .attr('y', function(d) { return y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
         .attr('height', function(d) { return getters.feelingGraph.getHeight() - y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
         .style('fill', d => d.eveningfeel < 0 ? 'white' : '#249E93')
+}
+
+function handleMouseOver(chartGroup, object, color, textValue, labelText) {   
+    const bar = d3.select(object)
+    
+    bar.transition().duration(100).style('fill', color)
+    
+    const x = Number(bar.attr('x')) + Number((bar.attr('width') / 2))    
+    const y = getters.feelingGraph.getHeight() - bar.attr('height') - 5
+    
+    const labelY = getters.feelingGraph.getHeight() - (bar.attr('height') / 2)
+    
+    chartGroup
+        .append('text')
+        .attr('class', 'tooltip')
+        .style('text-anchor', 'middle')
+        .style('font-size', '1rem')
+        .attr('x', x)
+        .attr('y', y)
+        .text(textValue)
+
+    chartGroup
+        .append('text')
+        .attr('class', 'tooltip')
+        .style('text-anchor', 'middle')
+        .style('font-size', '1rem')
+        .attr('x', x)
+        .attr('y', labelY)
+        .attr('text-color', 'white')
+        .text(labelText)
+
+}
+function handleMouseOut(chartGroup, object, color) {
+    d3.select(object).transition().duration(100).style('fill', color)
+    chartGroup.selectAll('.tooltip').remove()
 }
 
 // MAIN FUNCTIONS

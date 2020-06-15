@@ -1,7 +1,7 @@
 const margin = {
         top: 25,
         right: 200,
-        bottom: 250,
+        bottom: 160,
         left: 200
     },
     width = window.innerWidth - margin.left - margin.right,
@@ -423,7 +423,7 @@ function addSlider() {
                     }
                     return chart.width - mousex
                 })
-                .attr('y1', bar.bottom - 350)
+                .attr('y1', bar.bottom - 380)
                 .attr('y2', bar.top - 350)
                 .attr('stroke-width', '1').style('stroke', 'black')
                 .attr('class', 'page-line')
@@ -431,7 +431,7 @@ function addSlider() {
 
             d3.select('.right').append('rect')
                 .attr('x', '0')
-                .attr('y', bar.top - 350)
+                .attr('y', bar.top - 380)
                 .attr('height', (bar.height))
                 .attr('width', () => {
                     if (mousex > chart.width) {
@@ -458,7 +458,7 @@ function addSlider() {
                     }
                     return mousex
                 })
-                .attr('y', bar.top - 350)
+                .attr('y', bar.top - 380)
                 .attr('height', (bar.height))
                 .attr('width', () => {
                     if (mousex > chart.width) {
@@ -491,7 +491,7 @@ function addSlider() {
                     }
                     return mousex
                 })
-                .attr('y1', bar.bottom - 350)
+                .attr('y1', bar.bottom - 380)
                 .attr('y2', bar.top - 350)
                 .attr('stroke-width', '1').style('stroke', 'black')
                 .attr('class', 'page-line')

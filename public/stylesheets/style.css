@@ -135,6 +135,7 @@ text {
 .inactive {
   transition: all 300ms;
   fill: #d3d3d3;
+  stroke: grey;
 }
 
 body{
@@ -406,11 +407,15 @@ text {
 }
 
 .planets .bar-wrapper.show .cross:before {
-  transform:rotate(45deg)
+  transform:rotate(45deg);
 }
 
 .planets .bar-wrapper.show .cross:after {
-  transform:rotate(-45deg)
+  transform:rotate(-45deg);
+}
+
+.bar-label {
+  fill: white;
 }
 
 
@@ -474,6 +479,8 @@ pointer-events: none;}
 .daygoal {overflow-x: hidden}
 .daygoal #graph-container svg {display:block;margin:0 auto;}
 .daygoal #graph-container {width:unset;}
+
 .daygoal h1 {display: flex;
   justify-content: center;
   align-items: center;}
+

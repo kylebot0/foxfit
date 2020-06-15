@@ -294,7 +294,7 @@ function addOverlayData(planet) {
         const source = '/images/trophy' + obtainedTrophy
         document.querySelector('#graph-container').insertAdjacentHTML('beforeend', `<img class="trophy" src="${source}" />`)
         setTimeout(() => {
-            generateTrophyStars(10, 0)
+            generateTrophyStars(15, 0)
         }, 500);
     }
 

@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 
-
 // SETTINGS
 const settings = {
     container: {
@@ -13,7 +12,13 @@ const settings = {
         bottom: 40
     },
     spaceBetweenGraphs: 0,
-    dayLabels: ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag']
+    dayLabels: ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'],
+    
+    visibleIntensities: {
+        light: true,
+        medium: true,
+        heavy: true
+    }
 }
 
 const getters = {
@@ -41,6 +46,22 @@ getData().then(data => {
     const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
     const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
 
+    
+    const checkboxes = document.querySelectorAll('.checkbox-level')
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', e => { 
+
+            const selectedWeekNr = weekSelectElement.selectedIndex
+            const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
+            const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
+
+            settings.visibleIntensities[e.target.value] = e.target.checked
+
+            updateMovementGraph(pamDataForWeek)
+            updateFeelingGraph(dailyDataForWeek)
+        })
+    })
+
     createGraphs(pamDataForWeek, dailyDataForWeek)
 
     weekSelectElement.addEventListener('change', (event) => { 
@@ -48,11 +69,11 @@ getData().then(data => {
         const pamDataForWeek = filterForWeek(data.pamData, startDate, selectedWeekNr)
         const dailyDataForWeek = filterForWeek(data.daily, startDate, selectedWeekNr)
 
-        // createGraphs(pamDataForWeek, dailyDataForWeek)
         updateMovementGraph(pamDataForWeek)
         updateFeelingGraph(dailyDataForWeek)
     })
 })
+
 
 // GRAPH FUNCTIONS
 function createGraphs(pamData, dailyData) {
@@ -210,10 +231,17 @@ function updateMovementGraph(pamData) {
         .attr('width', x.bandwidth())
         .transition()
         .duration(300)
-        .attr('y', function(d) { return y(d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.light_activity) })
+        .attr('y', function(d) { 
+            let yPos = 0
+            return settings.visibleIntensities.light ? y(d.light_activity) : y(0)
+        })
+        .attr('height', function(d) {
+            if (!settings.visibleIntensities.light) return 0
+            return getters.movementGraph.getHeight() - y(d.light_activity) 
+        })
         .style('fill', '#9DD3CF')
 
+    
     selectedBarMediumElements
         .exit().remove()
     selectedBarMediumElements
@@ -223,9 +251,20 @@ function updateMovementGraph(pamData) {
         .attr('width', x.bandwidth())
         .transition()
         .duration(300)
-        .attr('y', function(d) { return y(d.medium_activity + d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.medium_activity) })
+        .attr('y', function(d) { 
+            let yPos = 0
+            if (settings.visibleIntensities.light) yPos += d.light_activity
+            if (settings.visibleIntensities.medium) yPos += d.medium_activity
+            return y(yPos) 
+        })
+        .attr('height', function(d) { 
+            if (!settings.visibleIntensities.medium) return 0
+            return getters.movementGraph.getHeight() - y(d.medium_activity) 
+        })
         .style('fill', '#3CC3B8')
+
+
+    
 
     selectedBarHeavyElements
         .exit().remove()
@@ -236,10 +275,20 @@ function updateMovementGraph(pamData) {
         .attr('width', x.bandwidth())
         .transition()
         .duration(300)
-        .attr('y', function(d) { return y(d.heavy_activity + d.medium_activity + d.light_activity) })
-        .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.heavy_activity) })
+        .attr('y', function(d) {
+            let yPos = 0
+            if (settings.visibleIntensities.light) yPos += d.light_activity
+            if (settings.visibleIntensities.medium) yPos += d.medium_activity
+            if (settings.visibleIntensities.heavy) yPos += d.heavy_activity
+            return y(yPos) 
+        })
+        .attr('height', function(d) { 
+            if (!settings.visibleIntensities.heavy) return 0
+            return getters.movementGraph.getHeight() - y(d.heavy_activity) 
+        })
         .style('fill', '#249E93')
 }
+    
 
 function updateFeelingGraph(dailyData) {
     

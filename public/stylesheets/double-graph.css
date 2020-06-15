@@ -1,3 +1,16 @@
+:root {
+    --font-main: 'Roboto', sans-serif;
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-bold: 500;
+    
+    --c-blue-dark: rgb(43, 116, 122);
+    --c-blue: #3CC3B8;
+    --c-blue-light: #9DD3CF;
+    --c-blue-lightest: #DEF5F7;
+    --c-white: white;
+  }
+  
 .container-graph{
     display:flex;
     flex-direction: row;
@@ -20,6 +33,9 @@
 .legend rect:hover {
     cursor: pointer;
 }
+header {
+    margin: 0;
+}
 .graph:hover {
     cursor: crosshair;
 }
@@ -33,4 +49,38 @@
     margin: 2em;
     margin-right: 10em;
     margin-left: 10em;
+}
+#weeks {
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em
+}
+select {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--c-blue-lightest);
+    color: rgb(19, 95, 89);
+    font-size: 1.25em;
+    font-weight: 500;
+}
+
+div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 100px;					
+    height: 50px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: var(--c-blue);	
+    border: 0px;		
+    pointer-events: none;			
+}
+
+.container-select h1{
+display:flex;
+justify-content: center;
+align-items: center;
+}
+
+.inactive-line {
+    stroke:#d3d3d3 ;
 }

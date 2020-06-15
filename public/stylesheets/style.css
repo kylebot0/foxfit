@@ -414,6 +414,11 @@ text {
 
 .bar-label {
   fill: white;
+
+}
+
+.bar-label {
+  fill: white;
 }
 
 .planets .bar-wrapper.show svg.graph {background:none;margin: auto;}
@@ -475,10 +480,10 @@ pointer-events: none;}
 .daygoal #graph-container svg {display:block;margin:0 auto;}
 .daygoal #graph-container {width:unset;}
 
+
 #feeling-graph-settings {
   background-color: var(--c-blue-lightest);
   color: var(--c-blue-dark);
   padding: 2rem;
   margin-top: 1rem;
 }
-

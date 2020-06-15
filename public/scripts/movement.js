@@ -1,7 +1,7 @@
 const margin = {
-        top: 100,
+        top: 25,
         right: 200,
-        bottom: 250,
+        bottom: 160,
         left: 200
     },
     width = window.innerWidth - margin.left - margin.right,
@@ -88,31 +88,35 @@ async function init() {
 
     toggleOptions(0, transformedData)
     addSlider()
+    onDateHover()
+    addLabel()
     d3.select('.select-left').on('change', function (d) {
         let val = d3.select('.select-left option:checked').node().value - 1
         let rightVal = d3.select('.select-right option:checked').node().value - 1
 
         d3.selectAll('.legend rect')
-        .transition()
-        .duration(350)
-        .attr('class', 'active')
+            .transition()
+            .duration(350)
+            .attr('class', 'active')
 
         updateRight(rightVal, transformedData)
         updateLeft(val, transformedData)
         toggleOptions(val, transformedData)
+        onDateHover()
     })
     d3.select('.select-right').on('change', function (d) {
         let val = d3.select('.select-right option:checked').node().value - 1
         let leftVal = d3.select('.select-left option:checked').node().value - 1
 
         d3.selectAll('.legend rect')
-        .transition()
-        .duration(350)
-        .attr('class', 'active')
+            .transition()
+            .duration(350)
+            .attr('class', 'active')
 
         updateRight(val, transformedData)
         updateLeft(leftVal, transformedData)
         toggleOptions(val, transformedData)
+        onDateHover()
     })
 
 }
@@ -168,6 +172,13 @@ function makeRightBars(subGroups, newData, maxValue, groups) {
     const y = d3.scaleBand()
         .range([0, height])
         .domain(groups)
+    svg2.append('g')
+        .attr('transform', 'translate(' + width / 2 + ', 0)')
+        .attr('class', 'y-axis-right')
+        .call(d3.axisRight(y).tickFormat((d) => {
+            return getDay(d)
+        }))
+
     const color = d3.scaleOrdinal()
         .domain(subGroups)
         .range(['#9dd3cf', '#3cc3b8', '#249e93'])
@@ -229,6 +240,7 @@ function makeLeftBars(subGroups, newData, maxValue, groups) {
         .range([0, height])
         .domain(groups)
     svg.append('g')
+        .attr('class', 'y-axis-left')
         .call(d3.axisLeft(y).tickFormat((d) => {
             return getDay(d)
         }))
@@ -287,9 +299,8 @@ function makeLegend(subGroups, val) {
         .range(['#9dd3cf', '#3cc3b8', '#249e93'])
 
     const legend = d3.select('.legend').append('g')
-    // .attr('transform', 'translate(' + (width / 2) + ', 100)')
 
-    legend.selectAll('rect')
+    legend.append('g').selectAll('rect')
         .data(subGroups)
         .enter()
         .append('rect')
@@ -297,17 +308,58 @@ function makeLegend(subGroups, val) {
             return d
         })
         .attr('class', 'active')
-        .attr('y', 75)
+        .attr('y', 40)
         .attr('x', (d, i) => {
             return (width / 2) + i * 200
         })
         .attr('width', 20)
         .attr('height', 20)
+        .attr('stroke', 'rgb(43, 116, 122)')
+        .attr('stroke-width', '2')
         .attr('fill', (d, i) => {
             return colors(i)
         })
 
-    legend.selectAll('text')
+    legend.append('g').selectAll('.vinkje')
+        .data(subGroups)
+        .enter()
+        .append('line')
+        .attr('id', (d) => {
+            return d
+        })
+        .attr('class', 'vinkje')
+        .attr('y1', 50)
+        .attr('y2', 55)
+        .attr('x1', (d, i) => {
+            return (width / 2) + i * 200 + 5
+        })
+        .attr('x2', (d, i) => {
+            return (width / 2) + i * 200 + 10
+        })
+        .attr('stroke-width', 2)
+        .attr('stroke', 'rgb(43, 116, 122)')
+
+    legend.append('g').selectAll('.vinkje2')
+        .data(subGroups)
+        .enter()
+        .append('line')
+        .attr('id', (d) => {
+            return d
+        })
+        .attr('class', 'vinkje2')
+        .attr('y1', 55)
+        .attr('y2', 43)
+        .attr('x1', (d, i) => {
+            return (width / 2) + i * 200 + 10
+        })
+        .attr('x2', (d, i) => {
+            return (width / 2) + i * 200 + 17
+        })
+        .attr('stroke-width', 2)
+        .attr('stroke', 'rgb(43, 116, 122)')
+
+
+    legend.append('g').selectAll('text')
         .data(subGroups)
         .enter()
         .append('text')
@@ -315,14 +367,12 @@ function makeLegend(subGroups, val) {
             let text = capitalizeFirstLetter(d) + ' activity'
             return text
         })
-        .attr('y', 100)
+        .attr('y', 65)
         .attr('x', (d, i) => {
             return (width / 2) + (i * 200) - 50
         })
         .attr('text-anchor', 'start')
         .attr('alignment-baseline', 'hanging')
-
-
 }
 
 function makeLeftChart(val, data) {
@@ -373,7 +423,7 @@ function addSlider() {
                     }
                     return chart.width - mousex
                 })
-                .attr('y1', bar.bottom - 350)
+                .attr('y1', bar.bottom - 380)
                 .attr('y2', bar.top - 350)
                 .attr('stroke-width', '1').style('stroke', 'black')
                 .attr('class', 'page-line')
@@ -381,7 +431,7 @@ function addSlider() {
 
             d3.select('.right').append('rect')
                 .attr('x', '0')
-                .attr('y', bar.top - 350)
+                .attr('y', bar.top - 380)
                 .attr('height', (bar.height))
                 .attr('width', () => {
                     if (mousex > chart.width) {
@@ -408,7 +458,7 @@ function addSlider() {
                     }
                     return mousex
                 })
-                .attr('y', bar.top - 350)
+                .attr('y', bar.top - 380)
                 .attr('height', (bar.height))
                 .attr('width', () => {
                     if (mousex > chart.width) {
@@ -441,7 +491,7 @@ function addSlider() {
                     }
                     return mousex
                 })
-                .attr('y1', bar.bottom - 350)
+                .attr('y1', bar.bottom - 380)
                 .attr('y2', bar.top - 350)
                 .attr('stroke-width', '1').style('stroke', 'black')
                 .attr('class', 'page-line')
@@ -466,6 +516,10 @@ function updateLeft(val, data) {
     const y = d3.scaleBand()
         .range([0, height])
         .domain(groups)
+    svg.select('.y-axis-left')
+        .call(d3.axisLeft(y).tickFormat((d) => {
+            return getDay(d)
+        }))
 
     let bars = svg
         .selectAll('g.chart')
@@ -508,6 +562,12 @@ function updateRight(val, data) {
     const y = d3.scaleBand()
         .range([0, height])
         .domain(groups)
+    svg2.select('.y-axis-right')
+        .attr('transform', 'translate(' + width / 2 + ', 0)')
+        .attr('class', 'y-axis-right')
+        .call(d3.axisRight(y).tickFormat((d) => {
+            return getDay(d)
+        }))
 
     let bars = svg2
         .selectAll('g.chart')
@@ -540,15 +600,21 @@ function updateRight(val, data) {
 function toggleOptions(val, data) {
     let rightVal = d3.select('.select-right option:checked').node().value - 1
     let leftVal = d3.select('.select-left option:checked').node().value - 1
-    let newData = []
     let filtered = []
     d3.select('.legend').selectAll('rect')
         .on('click', function (d) {
             let rect = d3.select(this)
             let id = rect.attr('id')
+            let line = d3.selectAll(`line#${id}`)
+            console.log(line)
+
 
             if (rect.attr('class') == 'active') {
                 filtered.push(id)
+                line
+                    .transition()
+                    .duration(350)
+                    .attr('class', 'inactive-line')
                 rect
                     .transition()
                     .duration(350)
@@ -557,9 +623,9 @@ function toggleOptions(val, data) {
                 let newDataRight = []
                 let newDataLeft = []
                 filtered.forEach((item) => {
-                    if(newDataRight.length == 0){
+                    if (newDataRight.length == 0) {
                         newDataRight = filterData(data, item, rightVal)
-                    newDataLeft = filterData(data, item, leftVal)
+                        newDataLeft = filterData(data, item, leftVal)
                     }
                     newDataRight = filterData(newDataRight, item, rightVal)
                     newDataLeft = filterData(newDataLeft, item, leftVal)
@@ -581,40 +647,99 @@ function toggleOptions(val, data) {
 
             } else {
                 filtered = filtered.filter(item => item !== id)
+                line
+                    .transition()
+                    .duration(350)
+                    .attr('class', '')
                 rect
                     .transition()
                     .duration(350)
                     .attr('class', 'active')
-                    if(filtered.length == 0){
-                        updateRight(rightVal, data)
-                        updateLeft(leftVal, data)
-                    }
-                    let newDataRight = []
-                    let newDataLeft = []
-                    filtered.forEach((item) => {
-                        if(newDataRight.length == 0){
-                            newDataRight = filterData(data, item, rightVal)
+                if (filtered.length == 0) {
+                    updateRight(rightVal, data)
+                    updateLeft(leftVal, data)
+                }
+                let newDataRight = []
+                let newDataLeft = []
+                filtered.forEach((item) => {
+                    if (newDataRight.length == 0) {
+                        newDataRight = filterData(data, item, rightVal)
                         newDataLeft = filterData(data, item, leftVal)
-                        }
-                        newDataRight = filterData(newDataRight, item, rightVal)
-                        newDataLeft = filterData(newDataLeft, item, leftVal)
-                        switch (item) {
-                            case 'light':
-                                updateRight(rightVal, newDataRight)
-                                updateLeft(leftVal, newDataLeft)
-                                break;
-                            case 'medium':
-                                updateRight(rightVal, newDataRight)
-                                updateLeft(leftVal, newDataLeft)
-                                break;
-                            case 'heavy':
-                                updateRight(rightVal, newDataRight)
-                                updateLeft(leftVal, newDataLeft)
-                                break;
-                        }
-                    })
+                    }
+                    newDataRight = filterData(newDataRight, item, rightVal)
+                    newDataLeft = filterData(newDataLeft, item, leftVal)
+                    switch (item) {
+                        case 'light':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                        case 'medium':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                        case 'heavy':
+                            updateRight(rightVal, newDataRight)
+                            updateLeft(leftVal, newDataLeft)
+                            break;
+                    }
+                })
             }
         })
+}
+
+function onDateHover() {
+    var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
+    d3.selectAll('.y-axis-left text').on('mouseover', function (d) {
+        hover(d)
+    }).on("mouseout", function (d) {
+        div.transition()
+            .duration(500)
+            .style("opacity", 0);
+    });
+    d3.selectAll('.y-axis-right text').on('mouseover', function (d) {
+        hover(d)
+    }).on("mouseout", function (d) {
+        div.transition()
+            .duration(500)
+            .style("opacity", 0);
+    });
+
+    function hover(value) {
+        console.log(getDay(value))
+        let day = getDate(value)
+        let chart = d3.select('.graph').node().getBoundingClientRect()
+        div.transition()
+            .duration(200)
+            .style("opacity", .9);
+        div.html('<h2>' + day + '</h2>')
+            .style("left", () => {
+                let x = 0
+                if (d3.event.pageX > chart.width) {
+                    x = -130
+                } else {
+                    x = 30
+                }
+                return (d3.event.pageX + x) + "px"
+            })
+            .style("top", (d3.event.pageY - 30) + "px");
+
+    }
+    console.log()
+}
+
+function addLabel() {
+    svg.append('text').style('text-anchor', 'middle')
+        .style('font-size', '1rem')
+        .text('Beweging (minuten)')
+        .attr('transform', `translate(${width / 4}, ${height + 50})`)
+        
+        svg2.append('text').style('text-anchor', 'middle')
+        .style('font-size', '1rem')
+        .text('Beweging (minuten)')
+        .attr('transform', `translate(${width / 4}, ${height + 50})`)
 }
 
 function maxVal(val) {
@@ -625,10 +750,15 @@ function maxVal(val) {
 }
 
 function getDay(d) {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag']
     let date = new Date(d)
     let day = days[date.getDay()]
     return day
+}
+
+function getDate(d) {
+    let date = new Date(d)
+    return date.toLocaleDateString("nl-NL")
 }
 
 function capitalizeFirstLetter(string) {

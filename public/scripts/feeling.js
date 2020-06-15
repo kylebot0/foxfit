@@ -186,34 +186,43 @@ function updateMovementGraph(pamData) {
         .data(pamData)
 
     selectedBarLightElements
+        .exit().remove()
+    selectedBarLightElements
         .enter().append('rect').merge(selectedBarLightElements)
         .attr('class', 'bar-light')
-        .style('fill', '#9DD3CF')
         .attr('x', function(d) { return x(new Date(d.date)) })
         .attr('width', x.bandwidth())
+        .transition()
+        .duration(300)
         .attr('y', function(d) { return y(d.light_activity) })
         .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.light_activity) })
-        .exit().remove()
+        .style('fill', '#9DD3CF')
 
+    selectedBarMediumElements
+        .exit().remove()
     selectedBarMediumElements
         .enter().append('rect').merge(selectedBarMediumElements)
         .attr('class', 'bar-medium')
-        .style('fill', '#3CC3B8')
         .attr('x', function(d) { return x(new Date(d.date)) })
         .attr('width', x.bandwidth())
+        .transition()
+        .duration(300)
         .attr('y', function(d) { return y(d.medium_activity + d.light_activity) })
         .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.medium_activity) })
-        .exit().remove()
+        .style('fill', '#3CC3B8')
 
+    selectedBarHeavyElements
+        .exit().remove()
     selectedBarHeavyElements
         .enter().append('rect').merge(selectedBarHeavyElements)
         .attr('class', 'bar-heavy')
-        .style('fill', '#249E93')
         .attr('x', function(d) { return x(new Date(d.date)) })
         .attr('width', x.bandwidth())
+        .transition()
+        .duration(300)
         .attr('y', function(d) { return y(d.heavy_activity + d.medium_activity + d.light_activity) })
         .attr('height', function(d) { return getters.movementGraph.getHeight() - y(d.heavy_activity) })
-        .exit().remove()
+        .style('fill', '#249E93')
 }
 
 function updateFeelingGraph(dailyData) {
@@ -239,20 +248,24 @@ function updateFeelingGraph(dailyData) {
     selectedBarMorningElements.exit().remove()
     selectedBarMorningElements.enter().append('rect').merge(selectedBarMorningElements)
         .attr('class', 'bar-morning')
-        .style('fill', d => d.morningfeel < 0 ? 'white' : '#9DD3CF')
         .attr('x', function(d) { return x(new Date(d.date)) })
         .attr('width', x.bandwidth() / 2)
+        .transition()
+        .duration(300)
         .attr('y', function(d) { return y(d.morningfeel < 0 ? 10 : d.morningfeel) })
         .attr('height', function(d) { return getters.feelingGraph.getHeight() - y(d.morningfeel < 0 ? 10 : d.morningfeel) })
+        .style('fill', d => d.morningfeel < 0 ? 'white' : '#9DD3CF')
 
     selectedBarEveningElements.exit().remove()    
     selectedBarEveningElements.enter().append('rect').merge(selectedBarEveningElements)
         .attr('class', 'bar-evening')
-        .style('fill', d => d.eveningfeel < 0 ? 'white' : '#249E93')
         .attr('x', function(d) { return x(new Date(d.date)) + x.bandwidth() / 2 })
         .attr('width', x.bandwidth() / 2)
+        .transition()
+        .duration(300)
         .attr('y', function(d) { return y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
         .attr('height', function(d) { return getters.feelingGraph.getHeight() - y(d.eveningfeel < 0 ? 10 : d.eveningfeel) })
+        .style('fill', d => d.eveningfeel < 0 ? 'white' : '#249E93')
 }
 
 // MAIN FUNCTIONS

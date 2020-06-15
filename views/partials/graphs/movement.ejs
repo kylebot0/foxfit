@@ -11,7 +11,7 @@
   </select>
 </div>
 
-<div id="feeling-graph-settings">
+<div id="feeling-graph-settings" class="hidden">
   <label for="licht">lichte inspanning
     <input type="checkbox" id="licht" name="licht" value="light" checked="checked" class="checkbox-level">
   </label>
@@ -23,6 +23,9 @@
   </label>
 </div>
 
+<div id="legend-container">
+  <svg id="feeling-legend"></svg>
+</div>
 <div id="graph-container">
 </div>
 <script src="https://d3js.org/d3.v4.min.js"></script>

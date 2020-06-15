@@ -382,6 +382,88 @@ function handleMouseOut(chartGroup, object, color) {
     chartGroup.selectAll('.bar-label').remove()
 }
 
+makeLegend()
+
+function makeLegend() {
+    const subGroups = ['licht', 'medium', 'zwaar']
+    const legendTexts = ['lichte beweging', 'medium beweging', 'zware beweging']
+    const width = window.innerWidth
+    const colors = d3.scaleOrdinal()
+        .domain(subGroups)
+        .range(['#9dd3cf', '#3cc3b8', '#249e93'])
+
+    const legend = d3.select('#feeling-legend')
+
+    const legendGroup = legend.selectAll('g')
+        .data(subGroups)
+        .enter()
+        .append('g')
+        .on('click', function(d) {
+            d3.select(this).classed('inactive', d3.select(this).classed('inactive') ? false : true)
+            console.log(`#${d}`)
+            
+            document.getElementById(d).click()
+            
+        })
+        .attr('y', 40)
+        .attr('x', (d, i) => {
+            return (width / 2) + i * 200 - 200
+        })
+
+    legendGroup.append('rect')
+        .attr('class', 'checkbox')
+        .attr('y', 40)
+        .attr('x', (d, i) => {
+            return (width / 2) + i * 200 - 200 - 10
+        })
+        .attr('width', 20)
+        .attr('height', 20)
+        .attr('stroke', 'rgb(43, 116, 122)')
+        .attr('stroke-width', '2')
+        .attr('fill', (d, i) => {
+            return colors(i)
+        })
+
+    legendGroup
+        .append('line')
+        .attr('class', 'vinkje')
+        .attr('y1', 50)
+        .attr('y2', 55)
+        .attr('x1', (d, i) => {
+            return (width / 2) + i * 200 - 5 - 200
+        })
+        .attr('x2', (d, i) => {
+            return (width / 2) + i * 200 - 200
+        })
+        .attr('stroke-width', 2)
+        .attr('stroke', 'rgb(43, 116, 122)')
+
+    legendGroup
+        .append('line')
+        .attr('class', 'vinkje')
+        .attr('y1', 55)
+        .attr('y2', 43)
+        .attr('x1', (d, i) => {
+            return (width / 2) + i * 200 - 200
+        })
+        .attr('x2', (d, i) => {
+            return (width / 2) + i * 200 + 7 - 200
+        })
+        .attr('stroke-width', 2)
+        .attr('stroke', 'rgb(43, 116, 122)')
+
+    legendGroup.append('text')
+        .text((d, i) => {
+            return legendTexts[i]
+        })
+        .attr('y', 65)
+        .attr('x', (d, i) => {
+            return (width / 2) + (i * 200) - 200
+        })
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'hanging')
+}
+
 // MAIN FUNCTIONS
 async function getData() {
     const baseUrl = window.location.protocol + '//' + window.location.host

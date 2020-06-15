@@ -628,18 +628,18 @@ function toggleOptions(val, data) {
                     newDataRight = filterData(newDataRight, item, rightVal)
                     newDataLeft = filterData(newDataLeft, item, leftVal)
                     switch (item) {
-                        case 'light':
-                            updateRight(rightVal, newDataRight)
-                            updateLeft(leftVal, newDataLeft)
-                            break;
-                        case 'medium':
-                            updateRight(rightVal, newDataRight)
-                            updateLeft(leftVal, newDataLeft)
-                            break;
-                        case 'heavy':
-                            updateRight(rightVal, newDataRight)
-                            updateLeft(leftVal, newDataLeft)
-                            break;
+                    case 'light':
+                        updateRight(rightVal, newDataRight)
+                        updateLeft(leftVal, newDataLeft)
+                        break
+                    case 'medium':
+                        updateRight(rightVal, newDataRight)
+                        updateLeft(leftVal, newDataLeft)
+                        break
+                    case 'heavy':
+                        updateRight(rightVal, newDataRight)
+                        updateLeft(leftVal, newDataLeft)
+                        break
                     }
                 })
 
@@ -667,18 +667,18 @@ function toggleOptions(val, data) {
                     newDataRight = filterData(newDataRight, item, rightVal)
                     newDataLeft = filterData(newDataLeft, item, leftVal)
                     switch (item) {
-                        case 'light':
-                            updateRight(rightVal, newDataRight)
-                            updateLeft(leftVal, newDataLeft)
-                            break;
-                        case 'medium':
-                            updateRight(rightVal, newDataRight)
-                            updateLeft(leftVal, newDataLeft)
-                            break;
-                        case 'heavy':
-                            updateRight(rightVal, newDataRight)
-                            updateLeft(leftVal, newDataLeft)
-                            break;
+                    case 'light':
+                        updateRight(rightVal, newDataRight)
+                        updateLeft(leftVal, newDataLeft)
+                        break
+                    case 'medium':
+                        updateRight(rightVal, newDataRight)
+                        updateLeft(leftVal, newDataLeft)
+                        break
+                    case 'heavy':
+                        updateRight(rightVal, newDataRight)
+                        updateLeft(leftVal, newDataLeft)
+                        break
                     }
                 })
             }
@@ -686,24 +686,24 @@ function toggleOptions(val, data) {
 }
 
 function onDateHover() {
-    var div = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
+    var div = d3.select('body').append('div')
+        .attr('class', 'tooltip')
+        .style('opacity', 0)
 
     d3.selectAll('.y-axis-left text').on('mouseover', function (d) {
         hover(d)
-    }).on("mouseout", function (d) {
+    }).on('mouseout', function (d) {
         div.transition()
             .duration(500)
-            .style("opacity", 0);
-    });
+            .style('opacity', 0)
+    })
     d3.selectAll('.y-axis-right text').on('mouseover', function (d) {
         hover(d)
-    }).on("mouseout", function (d) {
+    }).on('mouseout', function (d) {
         div.transition()
             .duration(500)
-            .style("opacity", 0);
-    });
+            .style('opacity', 0)
+    })
 
     function hover(value) {
         console.log(getDay(value))
@@ -711,18 +711,18 @@ function onDateHover() {
         let chart = d3.select('.graph').node().getBoundingClientRect()
         div.transition()
             .duration(200)
-            .style("opacity", .9);
+            .style('opacity', .9)
         div.html('<h2>' + day + '</h2>')
-            .style("left", () => {
+            .style('left', () => {
                 let x = 0
                 if (d3.event.pageX > chart.width) {
                     x = -130
                 } else {
                     x = 30
                 }
-                return (d3.event.pageX + x) + "px"
+                return (d3.event.pageX + x) + 'px'
             })
-            .style("top", (d3.event.pageY - 30) + "px");
+            .style('top', (d3.event.pageY - 30) + 'px')
 
     }
     console.log()
@@ -734,7 +734,7 @@ function addLabel() {
         .text('Beweging (minuten)')
         .attr('transform', `translate(${width / 4}, ${height + 50})`)
         
-        svg2.append('text').style('text-anchor', 'middle')
+    svg2.append('text').style('text-anchor', 'middle')
         .style('font-size', '1rem')
         .text('Beweging (minuten)')
         .attr('transform', `translate(${width / 4}, ${height + 50})`)
@@ -756,7 +756,7 @@ function getDay(d) {
 
 function getDate(d) {
     let date = new Date(d)
-    return date.toLocaleDateString("nl-NL")
+    return date.toLocaleDateString('nl-NL')
 }
 
 function capitalizeFirstLetter(string) {

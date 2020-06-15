@@ -135,6 +135,7 @@ text {
 .inactive {
   transition: all 300ms;
   fill: #d3d3d3;
+  stroke: grey;
 }
 
 body{

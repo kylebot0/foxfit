@@ -184,9 +184,13 @@ h2 {
   display: block;
 }
 
+.planets #grid > div {position: relative;}
+
 .planets #grid img.outline {
   filter: invert(1);
 }
+
+.planets #grid > div:not(:first-of-type) img:last-of-type {cursor: pointer;}
 
 .planets #grid div:nth-last-of-type(2n + 2) {margin-top:25vh;}
 
@@ -267,6 +271,7 @@ animation:move-twink-back 200s linear infinite;
   position: absolute;
   top:0;left:0;
   pointer-events: none;
+  z-index: 1;
 }
 .rocket.transition img:not(.star) {transition: all 4s ease-in-out;}
 
@@ -371,34 +376,33 @@ text {
   display: none;
 }
 
+.planets {overflow: hidden;}
+
 .planets .bar-wrapper {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  transition:all .6s;
-  top: 0px;left:0px;
+  transition:opacity .6s;
+  top: 0px;left:0px;right:0px;bottom:0px;
   background-color:#fff;
   z-index: 1;
-  height: 0vw;
-  width:0vw;
 }
 
 .planets .bar-wrapper.show {
   opacity: 1;
   pointer-events:unset;
-  height:100vh;
-  width:100vw;
 }
 
 .planets .bar-wrapper.show .cross:before, .planets .bar-wrapper.show .cross:after{
   content: "";
   position: absolute;
-  top:30px;
+  top:80px;
   right:30px;
   height:20px;
   width:2px;
   border-radius: 8px;
-  background-color:#000;
+  background-color:#fff;
+  z-index: 100;
 }
 
 .planets .bar-wrapper.show .cross:before {
@@ -408,3 +412,29 @@ text {
 .planets .bar-wrapper.show .cross:after {
   transform:rotate(-45deg)
 }
+
+
+.planets .bar-wrapper.show svg.graph {background:none;margin: auto;}
+.planets .bar-wrapper.show #graph-container {width: 100%; height: 100vh;display:flex;margin: 0;}
+
+.planets .bar-wrapper.show svg.graph line {stroke: #fff;stroke-width:2;}
+.planets .bar-wrapper.show svg.graph text {fill:#fff;}
+.planets .bar-wrapper.show svg.graph path {stroke: #fff;}
+
+.planets .bar-wrapper.show #graph-container .trophy {position:absolute;top:18%;left:82%;width:100px;}
+.planets .weeknumber {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size:14px;
+  pointer-events:none;
+}
+#grid > div {height:100%;}
+#grid > div.hover:before {content:"";
+position: absolute;
+top: 0;
+left: 0;right: 0;bottom:0;
+background-color: rgba(0,0,0,.5);
+pointer-events: none;}

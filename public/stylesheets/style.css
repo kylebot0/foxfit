@@ -459,7 +459,7 @@ pointer-events: none;}
 
 .daygoal select {
   font-family: 'Open Sans', sans-serif;
-  background-color: #9DD3CF;
+  background-color: rgb(222, 245, 247);;
   color: rgb(19, 95, 89);
   font-size: 1.25em;
   font-weight: 500;

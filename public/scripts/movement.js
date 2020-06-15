@@ -1,5 +1,5 @@
 const margin = {
-        top: 100,
+        top: 25,
         right: 200,
         bottom: 250,
         left: 200
@@ -308,7 +308,7 @@ function makeLegend(subGroups, val) {
             return d
         })
         .attr('class', 'active')
-        .attr('y', 75)
+        .attr('y', 40)
         .attr('x', (d, i) => {
             return (width / 2) + i * 200
         })
@@ -328,8 +328,8 @@ function makeLegend(subGroups, val) {
             return d
         })
         .attr('class', 'vinkje')
-        .attr('y1', 85)
-        .attr('y2', 90)
+        .attr('y1', 50)
+        .attr('y2', 55)
         .attr('x1', (d, i) => {
             return (width / 2) + i * 200 + 5
         })
@@ -347,8 +347,8 @@ function makeLegend(subGroups, val) {
             return d
         })
         .attr('class', 'vinkje2')
-        .attr('y1', 90)
-        .attr('y2', 78)
+        .attr('y1', 55)
+        .attr('y2', 43)
         .attr('x1', (d, i) => {
             return (width / 2) + i * 200 + 10
         })
@@ -367,7 +367,7 @@ function makeLegend(subGroups, val) {
             let text = capitalizeFirstLetter(d) + ' activity'
             return text
         })
-        .attr('y', 100)
+        .attr('y', 65)
         .attr('x', (d, i) => {
             return (width / 2) + (i * 200) - 50
         })

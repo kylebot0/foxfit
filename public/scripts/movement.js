@@ -415,13 +415,13 @@ function addSlider() {
                     if (mousex > chart.width) {
                         return mousex - chart.width
                     }
-                    return chart.width - mousex
+                    return chart.width - mousex - 10
                 })
                 .attr('x2', () => {
                     if (mousex > chart.width) {
                         return mousex - chart.width
                     }
-                    return chart.width - mousex
+                    return chart.width - mousex - 10
                 })
                 .attr('y1', bar.bottom - 380)
                 .attr('y2', bar.top - 350)
@@ -437,7 +437,7 @@ function addSlider() {
                     if (mousex > chart.width) {
                         return mousex - chart.width
                     }
-                    return chart.width - mousex
+                    return chart.width - mousex - 10
                 })
                 .attr('fill', '#9DD3CF')
                 .attr('opacity', '0.4')
@@ -448,13 +448,13 @@ function addSlider() {
                     if (mousex > chart.width) {
                         return chart.width * 2 - mousex
                     }
-                    return mousex
+                    return mousex 
                 })
 
             d3.select('.left').append('rect')
                 .attr('x', () => {
                     if (mousex > chart.width) {
-                        return chart.width * 2 - mousex
+                        return chart.width * 2 - mousex - 10
                     }
                     return mousex
                 })
@@ -481,13 +481,13 @@ function addSlider() {
             d3.selectAll('.left').append('line')
                 .attr('x1', () => {
                     if (mousex > chart.width) {
-                        return chart.width * 2 - mousex
+                        return chart.width * 2 - mousex - 10
                     }
                     return mousex
                 })
                 .attr('x2', () => {
                     if (mousex > chart.width) {
-                        return chart.width * 2 - mousex
+                        return chart.width * 2 - mousex  - 10
                     }
                     return mousex
                 })
@@ -496,8 +496,6 @@ function addSlider() {
                 .attr('stroke-width', '1').style('stroke', 'black')
                 .attr('class', 'page-line')
                 .attr('stroke-dasharray', '10 10')
-            console.log(chart.width, mousex)
-
         })
 }
 // =========================================

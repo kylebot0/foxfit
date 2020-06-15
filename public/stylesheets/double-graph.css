@@ -76,6 +76,10 @@ div.tooltip {
     pointer-events: none;			
 }
 
+line{
+    pointer-events: none;
+}
+
 .container-select h1{
 display:flex;
 justify-content: center;

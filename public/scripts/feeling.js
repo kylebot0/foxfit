@@ -6,7 +6,7 @@ const settings = {
         id: 'graph-container',
     },
     margins: {
-        left:50,
+        left:100,
         right:50,
         top:40,
         bottom: 40
@@ -99,6 +99,12 @@ function createMovementGraph(svg, pamData) {
         .attr('transform', `translate(0, ${getters.movementGraph.getHeight()})`)
         .call(xAxis)
 
+    chartGroup.append('text')
+        .attr('transform',`translate(-${settings.margins.left / 2 + 4 }, ${getters.movementGraph.getHeight() / 2}) rotate(270)`)
+        .style('text-anchor', 'middle')
+        .style('font-size', '1rem')
+        .text('Beweging (minuten)')
+
     updateMovementGraph(pamData)
 }
 
@@ -134,6 +140,13 @@ function createFeelingGraph(svg, dailyData) {
         .attr('class','axis x')
         .attr('transform', `translate(0, ${getters.feelingGraph.getHeight()})`)
         .call(xAxis)
+
+        
+    chartGroup.append('text')
+        .attr('transform',`translate(-${settings.margins.left / 2 + 4 }, ${getters.feelingGraph.getHeight() / 2}) rotate(270)`)
+        .style('text-anchor', 'middle')
+        .style('font-size', '1rem')
+        .text('Gevoelsscore')
         
     chartGroup.selectAll('.bar-divider')
         .data(dailyData)

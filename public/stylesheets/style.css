@@ -445,6 +445,8 @@ pointer-events: none;}
 .daygoal .container-select{
   display:flex;
   width: 100vw;
+  background-color: var(--c-blue-dark);
+  margin-top:-80px;
 }
 
 .daygoal .container-select select{

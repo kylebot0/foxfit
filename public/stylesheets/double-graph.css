@@ -16,6 +16,7 @@
     flex-direction: row;
 }
 
+body{overflow:hidden}
 .container-legend{
     z-index: 100;
     width: 100vw;

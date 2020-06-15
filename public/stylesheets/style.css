@@ -12,7 +12,6 @@
 }
 
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   padding:0;
   margin: 0;
   background-color: var(--c-blue-dark);
@@ -347,15 +346,14 @@ label {
 }
 
 #graph-container {
-  width: calc(100vw - 10rem);
+  width: 100vw;
   height: 80vh;
-  margin: 1rem 5rem;
   box-sizing: border-box;
+
 }
 
 .graph {
   background: linear-gradient(#DEF5F7 50%, rgb(237, 250, 252) 50%);
-  border-radius: 10px;
 }
 
 .axis line, .axis .domain {
@@ -476,3 +474,11 @@ pointer-events: none;}
 .daygoal {overflow-x: hidden}
 .daygoal #graph-container svg {display:block;margin:0 auto;}
 .daygoal #graph-container {width:unset;}
+
+#feeling-graph-settings {
+  background-color: var(--c-blue-lightest);
+  color: var(--c-blue-dark);
+  padding: 2rem;
+  margin-top: 1rem;
+}
+

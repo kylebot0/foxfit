@@ -85,7 +85,3 @@ display:flex;
 justify-content: center;
 align-items: center;
 }
-
-.inactive-line {
-    stroke:#d3d3d3 ;
-}

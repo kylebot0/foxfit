@@ -310,7 +310,7 @@ function makeLegend(subGroups, val) {
         .attr('class', 'active')
         .attr('y', 40)
         .attr('x', (d, i) => {
-            return (width / 2) + i * 200
+            return (width / 2) + i * 187
         })
         .attr('width', 20)
         .attr('height', 20)
@@ -331,10 +331,10 @@ function makeLegend(subGroups, val) {
         .attr('y1', 50)
         .attr('y2', 55)
         .attr('x1', (d, i) => {
-            return (width / 2) + i * 200 + 5
+            return (width / 2) + i * 187 + 5
         })
         .attr('x2', (d, i) => {
-            return (width / 2) + i * 200 + 10
+            return (width / 2) + i * 187 + 10
         })
         .attr('stroke-width', 2)
         .attr('stroke', 'rgb(43, 116, 122)')
@@ -350,10 +350,10 @@ function makeLegend(subGroups, val) {
         .attr('y1', 55)
         .attr('y2', 43)
         .attr('x1', (d, i) => {
-            return (width / 2) + i * 200 + 10
+            return (width / 2) + i * 187 + 10
         })
         .attr('x2', (d, i) => {
-            return (width / 2) + i * 200 + 17
+            return (width / 2) + i * 187 + 17
         })
         .attr('stroke-width', 2)
         .attr('stroke', 'rgb(43, 116, 122)')
@@ -364,12 +364,15 @@ function makeLegend(subGroups, val) {
         .enter()
         .append('text')
         .text((d) => {
-            let text = capitalizeFirstLetter(d) + ' activity'
+            let text = capitalizeFirstLetter(d) + ' activiteit'
             return text
         })
         .attr('y', 65)
         .attr('x', (d, i) => {
-            return (width / 2) + (i * 200) - 50
+            if(i == 2){
+                return (width / 2) + (i * 180) - 45
+            }
+            return (width / 2) + (i * 180) - 55
         })
         .attr('text-anchor', 'start')
         .attr('alignment-baseline', 'hanging')

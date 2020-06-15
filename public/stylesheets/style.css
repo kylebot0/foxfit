@@ -452,17 +452,19 @@ pointer-events: none;}
   width: 100vw;
   background-color: var(--c-blue-dark);
   margin-top:-80px;
+  flex-direction: column;
 }
 
 .daygoal .container-select select{
   margin: 2em;
-  margin-right: 10em;
-  margin-left: 10em;
+  width: 150px;
+  display: block;
+  margin-left: auto;margin-right:auto;margin-top:0;
 }
 
 .daygoal select {
   font-family: 'Open Sans', sans-serif;
-  background-color: #9DD3CF;
+  background-color: rgb(222, 245, 247);;
   color: rgb(19, 95, 89);
   font-size: 1.25em;
   font-weight: 500;
@@ -477,3 +479,8 @@ pointer-events: none;}
 .daygoal {overflow-x: hidden}
 .daygoal #graph-container svg {display:block;margin:0 auto;}
 .daygoal #graph-container {width:unset;}
+
+.daygoal h1 {display: flex;
+  justify-content: center;
+  align-items: center;}
+

@@ -40,11 +40,9 @@ async function fetchData() {
 
 function getColor(count, data) {
     if(count >= data.curweekgoal) {
-        return 'green'
-    } else if(count + (data.curweekgoal / 10) > data.curweekgoal) {
-        return 'yellow'
+        return '#249E93'
     } else {
-        return 'red'
+        return 'rgba(36, 158, 147,.5)'
     }
 }
 

@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 
+
 // SETTINGS
 const settings = {
     container: {
@@ -11,7 +12,8 @@ const settings = {
         top:40,
         bottom: 40
     },
-    spaceBetweenGraphs: 0
+    spaceBetweenGraphs: 0,
+    dayLabels: ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag']
 }
 
 const getters = {
@@ -121,8 +123,10 @@ function createFeelingGraph(svg, dailyData) {
         .range([getters.feelingGraph.getHeight(), 0])
 
     const xAxis = d3.axisBottom(x).ticks(7).tickFormat(x => {
-        const formatTime = d3.timeFormat('%A')
-        return formatTime(x)
+        // const formatTime = d3.timeFormat('%A')
+        // return formatTime(x)
+    
+        return settings.dayLabels[x.getDay()]
     })
 
     const yAxis = d3.axisLeft(y).ticks(9).tickPadding(10).tickSize(2)
@@ -140,7 +144,6 @@ function createFeelingGraph(svg, dailyData) {
         .attr('class','axis x')
         .attr('transform', `translate(0, ${getters.feelingGraph.getHeight()})`)
         .call(xAxis)
-
         
     chartGroup.append('text')
         .attr('transform',`translate(-${settings.margins.left / 2 + 4 }, ${getters.feelingGraph.getHeight() / 2}) rotate(270)`)
@@ -295,33 +298,34 @@ function updateFeelingGraph(dailyData) {
         .style('fill', d => d.eveningfeel < 0 ? 'white' : '#249E93')
 }
 
-function handleMouseOver(chartGroup, object, color, textValue, labelText) {   
-    const bar = d3.select(object)
+function handleMouseOver(chartGroup, object, color, textValue, labelText) {
+    if (textValue !== 0) {
+        const bar = d3.select(object)
     
-    bar.transition().duration(100).style('fill', color)
+        bar.transition().duration(100).style('fill', color)
+        
+        const x = Number(bar.attr('x')) + Number((bar.attr('width') / 2))    
+        const y = getters.feelingGraph.getHeight() - bar.attr('height') - 5
+        
+        const labelY = getters.feelingGraph.getHeight() - (bar.attr('height') / 2)
+        
+        chartGroup
+            .append('text')
+            .attr('class', 'tooltip')
+            .style('text-anchor', 'middle')
+            .style('font-size', '1rem')
+            .attr('x', x)
+            .attr('y', y)
+            .text(textValue)
     
-    const x = Number(bar.attr('x')) + Number((bar.attr('width') / 2))    
-    const y = getters.feelingGraph.getHeight() - bar.attr('height') - 5
-    
-    const labelY = getters.feelingGraph.getHeight() - (bar.attr('height') / 2)
-    
-    chartGroup
-        .append('text')
-        .attr('class', 'tooltip')
-        .style('text-anchor', 'middle')
-        .style('font-size', '1rem')
-        .attr('x', x)
-        .attr('y', y)
-        .text(textValue)
-
-    chartGroup
-        .append('text')
-        .attr('class', 'bar-label')
-        .style('text-anchor', 'middle')
-        .style('font-size', '1rem')
-        .attr('transform', `translate(${x}, ${labelY}) rotate(270)`)
-        .text(labelText)
-
+        chartGroup
+            .append('text')
+            .attr('class', 'bar-label')
+            .style('text-anchor', 'middle')
+            .style('font-size', '1rem')
+            .attr('transform', `translate(${x}, ${labelY}) rotate(270)`)
+            .text(labelText)
+    }
 }
 function handleMouseOut(chartGroup, object, color) {
     d3.select(object).transition().duration(100).style('fill', color)

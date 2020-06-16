@@ -16,7 +16,7 @@
     flex-direction: row;
 }
 
-body{overflow:hidden}
+main{overflow:hidden}
 .container-legend{
     z-index: 100;
     width: 100vw;
@@ -86,3 +86,4 @@ display:flex;
 justify-content: center;
 align-items: center;
 }
+

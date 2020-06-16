@@ -1,7 +1,7 @@
 const margin = {
         top: 25,
         right: 200,
-        bottom: 160,
+        bottom: 180,
         left: 200
     },
     width = window.innerWidth - margin.left - margin.right,
@@ -70,12 +70,11 @@ function filterData(data, id, val) {
     let week = deepCopy[val].group
     week.forEach((d) => {
         d[id] = 0
-        // delete d[id]
     })
     return deepCopy
 }
 // =========================================
-// =============Select option===============
+// =============INIT========================
 // =========================================
 init()
 
@@ -435,7 +434,7 @@ function addSlider() {
                     }
                     return chart.width - mousex - 10
                 })
-                .attr('y1', bar.bottom - 380)
+                .attr('y1', bar.bottom - 340)
                 .attr('y2', bar.top - 350)
                 .attr('stroke-width', '1').style('stroke', 'black')
                 .attr('class', 'page-line')
@@ -443,7 +442,7 @@ function addSlider() {
 
             d3.select('.right').append('rect')
                 .attr('x', '0')
-                .attr('y', bar.top - 380)
+                .attr('y', bar.top - 340)
                 .attr('height', (bar.height))
                 .attr('width', () => {
                     if (mousex > chart.width) {
@@ -470,7 +469,7 @@ function addSlider() {
                     }
                     return mousex
                 })
-                .attr('y', bar.top - 380)
+                .attr('y', bar.top - 340)
                 .attr('height', (bar.height))
                 .attr('width', () => {
                     if (mousex > chart.width) {
@@ -503,7 +502,7 @@ function addSlider() {
                     }
                     return mousex
                 })
-                .attr('y1', bar.bottom - 380)
+                .attr('y1', bar.bottom - 340)
                 .attr('y2', bar.top - 350)
                 .attr('stroke-width', '1').style('stroke', 'black')
                 .attr('class', 'page-line')

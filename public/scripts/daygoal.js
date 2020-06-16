@@ -252,7 +252,7 @@ function updateChart(data) {
 
 
 function getDay(d) {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag']
     let date = new Date(d)
     let day = days[date.getDay()]
     return day

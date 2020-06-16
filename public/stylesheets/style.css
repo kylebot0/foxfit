@@ -695,16 +695,14 @@ text {
 }
 
 footer {
-  height: 5vh;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   background-color: var(--c-blue-dark);
   position: fixed;
   z-index: 2;
-  bottom: 0;
   width: 100%;
-  padding: 0.2rem;
+  padding: 0.5rem;
 }
 
 .github-logo {

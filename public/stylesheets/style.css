@@ -188,15 +188,26 @@ body {
   display: grid;
   grid-template-rows: 15% 85%;
   grid-template-columns: 1fr 1fr 1fr;
+  background-color: #fff;
 }
-
+.index section:nth-of-type(2){
+  grid-template-columns: 1fr 1fr;
+}
+.index section:nth-of-type(3){
+  grid-template-columns: 1fr;
+}
+.index section:nth-of-type(4){
+  grid-template-columns: 1fr 1fr;
+}
 .index article {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  max-width: 33vw;
+  max-width: 25vw;
   margin: 2em;
+  align-self: center;
+  justify-self: center;
 }
 
 .index article img {

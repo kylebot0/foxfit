@@ -98,6 +98,11 @@ async function init() {
             .duration(350)
             .attr('class', 'active')
 
+            d3.selectAll('.legend line')
+            .transition()
+            .duration(350)
+            .attr('class', 'vinkje')
+
         updateRight(rightVal, transformedData)
         updateLeft(val, transformedData)
         toggleOptions(val, transformedData)
@@ -112,6 +117,11 @@ async function init() {
             .duration(350)
             .attr('class', 'active')
 
+            d3.selectAll('.legend line')
+            .transition()
+            .duration(350)
+            .attr('class', 'vinkje')
+            
         updateRight(val, transformedData)
         updateLeft(leftVal, transformedData)
         toggleOptions(val, transformedData)

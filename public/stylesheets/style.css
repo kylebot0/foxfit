@@ -715,3 +715,7 @@ footer {
 .main-planets {
   overflow-y: auto;
 }
+
+.cross::before, .cross::after {
+  cursor: pointer;
+}

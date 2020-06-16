@@ -3,7 +3,7 @@
   --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-bold: 500;
-  
+
   --c-blue-dark: rgb(43, 116, 122);
   --c-blue: #3CC3B8;
   --c-blue-light: #9DD3CF;
@@ -12,7 +12,7 @@
 }
 
 body {
-  padding:0;
+  padding: 0;
   margin: 0;
   background-color: var(--c-blue-lightest);
   font-family: var(--font-main);
@@ -52,7 +52,7 @@ header h1 {
   margin-left: 2rem;
 }
 
-h1 {  
+h1 {
   font-weight: var(--font-weight-light);
 }
 
@@ -158,18 +158,56 @@ text {
 }
 
 .inactive-line {
-  stroke:#d3d3d3 ;
+  stroke: #d3d3d3;
 }
 
 .hidden {
   display: none;
 }
 
-body{
-  padding:0;
+body {
+  padding: 0;
   margin: 0;
 }
 
+.index h1 {
+  align-self: center;
+}
+.index h2,
+.index h3 {
+  font-weight: normal;
+  color: rgb(19, 95, 89);
+}
+
+.index p {
+  color: rgb(19, 95, 89);
+}
+
+.index section {
+  margin: 5em;
+  display: grid;
+  grid-template-rows: 15% 85%;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.index article {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  max-width: 33vw;
+  margin: 2em;
+}
+
+.index article img {
+  max-width: 25vw;
+}
+.container-title {
+  grid-column: 1 / -1;
+  text-align:center;
+  font-size: 1.32em;
+
+}
 h2 {
   font-weight: var(--font-weight-regular);
 }
@@ -192,7 +230,7 @@ h2 {
 }
 
 .planets {
-  background-color:#4a4a49;
+  background-color: #4a4a49;
 }
 
 .planets {
@@ -202,32 +240,43 @@ h2 {
 .planets {
   max-height: 100vh;
 }
+
 .planets #grid {
   display: flex;
   justify-content: space-around;
 }
+
 .planets #grid img {
   max-width: 100%;
   height: 100px;
   display: block;
 }
 
-.planets #grid > div {position: relative;}
+.planets #grid>div {
+  position: relative;
+}
 
 .planets #grid img.outline {
   filter: invert(1);
 }
 
-.planets #grid > div:not(:first-of-type) img:last-of-type {cursor: pointer;}
+.planets #grid>div:not(:first-of-type) img:last-of-type {
+  cursor: pointer;
+}
 
-.planets #grid div:nth-last-of-type(2n + 2) {margin-top:25vh;}
+.planets #grid div:nth-last-of-type(2n + 2) {
+  margin-top: 25vh;
+}
 
-.planets #grid div:nth-last-of-type(2n + 1) {margin-top:45vh;}
+.planets #grid div:nth-last-of-type(2n + 1) {
+  margin-top: 45vh;
+}
 
 .planets #grid div {
   display: flex;
   flex-direction: column;
 }
+
 .planets #grid div .trophy {
   width: auto;
   height: 30px;
@@ -235,73 +284,125 @@ h2 {
 }
 
 @keyframes move-twink-back {
-  from {background-position:0 0;}
-  to {background-position:-10000px 5000px;}
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -10000px 5000px;
+  }
 }
+
 @-webkit-keyframes move-twink-back {
-  from {background-position:0 0;}
-  to {background-position:-10000px 5000px;}
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -10000px 5000px;
+  }
 }
+
 @-moz-keyframes move-twink-back {
-  from {background-position:0 0;}
-  to {background-position:-10000px 5000px;}
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -10000px 5000px;
+  }
 }
+
 @-ms-keyframes move-twink-back {
-  from {background-position:0 0;}
-  to {background-position:-10000px 5000px;}
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -10000px 5000px;
+  }
 }
 
 @keyframes move-clouds-back {
-  from {background-position:0 0;}
-  to {background-position:10000px 0;}
-}
-@-webkit-keyframes move-clouds-back {
-  from {background-position:0 0;}
-  to {background-position:10000px 0;}
-}
-@-moz-keyframes move-clouds-back {
-  from {background-position:0 0;}
-  to {background-position:10000px 0;}
-}
-@-ms-keyframes move-clouds-back {
-  from {background-position: 0;}
-  to {background-position:10000px 0;}
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 10000px 0;
+  }
 }
 
-.stars, .twinkling, .clouds {
-position:absolute;
-top:0;
-left:0;
-right:0;
-bottom:0;
-width:100%;
-height:100%;
-display:block;
+@-webkit-keyframes move-clouds-back {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 10000px 0;
+  }
+}
+
+@-moz-keyframes move-clouds-back {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 10000px 0;
+  }
+}
+
+@-ms-keyframes move-clouds-back {
+  from {
+    background-position: 0;
+  }
+
+  to {
+    background-position: 10000px 0;
+  }
+}
+
+.stars,
+.twinkling,
+.clouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .stars {
-background:#000 url(http://www.script-tutorials.com/demos/360/images/stars.png) repeat top center;
-z-index:1;
+  background: #000 url(http://www.script-tutorials.com/demos/360/images/stars.png) repeat top center;
+  z-index: 1;
 }
 
-.twinkling{
-background:transparent url(http://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
-z-index: 2;
--moz-animation:move-twink-back 200s linear infinite;
--ms-animation:move-twink-back 200s linear infinite;
--o-animation:move-twink-back 200s linear infinite;
--webkit-animation:move-twink-back 200s linear infinite;
-animation:move-twink-back 200s linear infinite;
+.twinkling {
+  background: transparent url(http://www.script-tutorials.com/demos/360/images/twinkling.png) repeat top center;
+  z-index: 2;
+  -moz-animation: move-twink-back 200s linear infinite;
+  -ms-animation: move-twink-back 200s linear infinite;
+  -o-animation: move-twink-back 200s linear infinite;
+  -webkit-animation: move-twink-back 200s linear infinite;
+  animation: move-twink-back 200s linear infinite;
 }
 
-.rocket img:not(.star){
+.rocket img:not(.star) {
   width: 80px;
   position: absolute;
-  top:0;left:0;
+  top: 0;
+  left: 0;
   pointer-events: none;
   z-index: 2;
 }
-.rocket.transition img:not(.star) {transition: all 4s ease-in-out;}
+
+.rocket.transition img:not(.star) {
+  transition: all 4s ease-in-out;
+}
 
 .rocket.planet-1 img:not(.star) {
   top: 42vh;
@@ -345,8 +446,8 @@ animation:move-twink-back 200s linear infinite;
   transform: rotate(0deg);
 }
 
-.star{
-  position:absolute;
+.star {
+  position: absolute;
   transition: top .5s linear, left .5s linear, opacity .2s;
 }
 
@@ -376,7 +477,8 @@ label {
   background: linear-gradient(#DEF5F7 50%, rgb(237, 250, 252) 50%);
 }
 
-.axis line, .axis .domain {
+.axis line,
+.axis .domain {
   stroke: #9DD3CF;
   stroke-width: 2;
 }
@@ -391,45 +493,52 @@ text {
   fill: rgb(19, 95, 89);
 }
 
-.feel-axis-y .tick:last-child, .feel-axis-y .tick:nth-last-child(2) {
+.feel-axis-y .tick:last-child,
+.feel-axis-y .tick:nth-last-child(2) {
   display: none;
 }
 
-.planets {overflow: hidden;}
+.planets {
+  overflow: hidden;
+}
 
 .planets .bar-wrapper {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  transition:opacity .6s;
-  top: 0px;left:0px;right:0px;bottom:0px;
-  background-color:#fff;
+  transition: opacity .6s;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  background-color: #fff;
   z-index: 1;
 }
 
 .planets .bar-wrapper.show {
   opacity: 1;
-  pointer-events:unset;
+  pointer-events: unset;
 }
 
-.planets .bar-wrapper.show .cross:before, .planets .bar-wrapper.show .cross:after{
+.planets .bar-wrapper.show .cross:before,
+.planets .bar-wrapper.show .cross:after {
   content: "";
   position: absolute;
-  top:80px;
-  right:30px;
-  height:20px;
-  width:2px;
+  top: 80px;
+  right: 30px;
+  height: 20px;
+  width: 2px;
   border-radius: 8px;
-  background-color:#fff;
+  background-color: #fff;
   z-index: 100;
 }
 
 .planets .bar-wrapper.show .cross:before {
-  transform:rotate(45deg);
+  transform: rotate(45deg);
 }
 
 .planets .bar-wrapper.show .cross:after {
-  transform:rotate(-45deg);
+  transform: rotate(-45deg);
 }
 
 .bar-label {
@@ -441,51 +550,91 @@ text {
   fill: white;
 }
 
-.planets .bar-wrapper.show svg.graph {background:none;margin: auto;}
-.planets .bar-wrapper.show #graph-container {width: 100%; height: 100vh;display:flex;margin: 0;}
+.planets .bar-wrapper.show svg.graph {
+  background: none;
+  margin: auto;
+}
 
-.planets .bar-wrapper.show svg.graph line {stroke: #fff;stroke-width:2;}
-.planets .bar-wrapper.show svg.graph text {fill:#fff;}
-.planets .bar-wrapper.show svg.graph path {stroke: #fff;}
+.planets .bar-wrapper.show #graph-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  margin: 0;
+}
 
-.planets .bar-wrapper.show #graph-container .trophy {position:absolute;top:18%;left:82%;width:100px;}
+.planets .bar-wrapper.show svg.graph line {
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.planets .bar-wrapper.show svg.graph text {
+  fill: #fff;
+}
+
+.planets .bar-wrapper.show svg.graph path {
+  stroke: #fff;
+}
+
+.planets .bar-wrapper.show #graph-container .trophy {
+  position: absolute;
+  top: 18%;
+  left: 82%;
+  width: 100px;
+}
+
 .planets .weeknumber {
   position: absolute;
   top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-weight: bold;
-  font-size:14px;
-  pointer-events:none;
+  font-size: 14px;
+  pointer-events: none;
 }
-#grid > div {height:100%;}
-#grid > div.hover:before {content:"";
-position: absolute;
-top: 0;
-left: 0;right: 0;bottom:0;
-background-color: rgba(0,0,0,.5);
-pointer-events: none;}
 
-.daygoal {background:linear-gradient(#DEF5F7 50%, rgb(237, 250, 252) 50%)}
-.daygoal #graph-container .graph {background: none;}
+#grid>div {
+  height: 100%;
+}
 
-.daygoal .container-select{
-  display:flex;
+#grid>div.hover:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, .5);
+  pointer-events: none;
+}
+
+.daygoal {
+  background: linear-gradient(#DEF5F7 50%, rgb(237, 250, 252) 50%)
+}
+
+.daygoal #graph-container .graph {
+  background: none;
+}
+
+.daygoal .container-select {
+  display: flex;
   width: 100vw;
   background-color: var(--c-blue-dark);
   flex-direction: column;
 }
 
-.daygoal .container-select select{
+.daygoal .container-select select {
   margin: 2em;
   width: 150px;
   display: block;
-  margin-left: auto;margin-right:auto;margin-top:0;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
 }
 
 .daygoal select {
   font-family: 'Open Sans', sans-serif;
-  background-color: rgb(222, 245, 247);;
+  background-color: rgb(222, 245, 247);
+  ;
   color: rgb(19, 95, 89);
   font-size: 1.25em;
   font-weight: 500;
@@ -497,13 +646,24 @@ pointer-events: none;}
   padding-right: 1em
 }
 
-.daygoal {overflow-x: hidden}
-.daygoal #graph-container svg {display:block;margin:0 auto;}
-.daygoal #graph-container {width:unset;}
+.daygoal {
+  overflow-x: hidden
+}
 
-.daygoal h1 {display: flex;
+.daygoal #graph-container svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.daygoal #graph-container {
+  width: unset;
+}
+
+.daygoal h1 {
+  display: flex;
   justify-content: center;
-  align-items: center;}
+  align-items: center;
+}
 
 #select-week {
   padding: 0.5em;

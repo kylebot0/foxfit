@@ -50,7 +50,7 @@ function createPlanets(trophy, planets) {
         } else if(trophy[singleTrophy] === 1) {
             collectedTrophySource = '/bronze.svg'
         }
-        wrapper.insertAdjacentHTML('beforeend', `<div>${collectedTrophySource === false ? '' : `<img class="trophy" src="${collectedTrophy + collectedTrophySource}" />`}<img class="${className}" data-weekNumber="${i + 2}" data-obtained="${collectedTrophySource}" data-trophy="${singleTrophy}" src="${source + sourceVar}" /></div>`)
+        wrapper.insertAdjacentHTML('beforeend', `<div>${collectedTrophySource === false ? '' : `<img class="trophy" src="${collectedTrophy + collectedTrophySource}" />`}<img class="${className}" data-weekNumber="${i + 1}" data-obtained="${collectedTrophySource}" data-trophy="${singleTrophy}" src="${source + sourceVar}" /></div>`)
     })
     placeRocket(latestTrophy)
     addPlanetEvents()
@@ -160,7 +160,7 @@ function addPlanetEvents() {
 
 function addOverlayData(planet) {
     const obtainedTrophy = planet.dataset.obtained
-    obtainedTrophy === false ? null : insertTrophy(obtainedTrophy)
+    obtainedTrophy === "false" ? null : insertTrophy(obtainedTrophy)
     // set the dimensions and margins of the graph
     const margin = {top: 50, right: 50, bottom: 100, left: 80},
     width = 960 - margin.left - margin.right,
@@ -291,11 +291,14 @@ function addOverlayData(planet) {
     }
 
     function insertTrophy(obtainedTrophy) {
+        console.log(obtainedTrophy)
         const source = '/images/trophy' + obtainedTrophy
         document.querySelector('#graph-container').insertAdjacentHTML('beforeend', `<img class="trophy" src="${source}" />`)
         setTimeout(() => {
             generateTrophyStars(15, 0)
         }, 500);
+        
+        
     }
 
     function generateTrophyStars(noS, index) {

@@ -22,7 +22,6 @@
     - [Score graph](#score-graph)
     - [Too long to read](#too-long-to-read)
     - [Known Bugs](#known-bugs)
-    - [Upcoming features](#upcoming-features)
   - [Installation 🔍](#installation-)
     - [Before you clone](#before-you-clone)
     - [Install the app](#install-the-app)
@@ -102,11 +101,6 @@ You can also click on a planet, where the week is visible and a graph is made wi
 ### Known Bugs
 
 - Rocket sometimes goes off the screen.
-
-### Upcoming features
-
-- [ ] Switch modes
-- [ ] Switch grid sizes
 
 
 ## Installation 🔍

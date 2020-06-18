@@ -1,7 +1,7 @@
 
 # Foxfit
 
-![preview](https://github.com/kylebot0/foxfit/blob/master/wiki-assets/Dagdoelen/Dagdoel_2.png)
+![image](https://user-images.githubusercontent.com/43671292/84998641-66e4eb80-b150-11ea-857c-87e1a50a3bf6.png)
 ## Table of Contents 🗃
 
 - [Foxfit](#foxfit)
@@ -49,7 +49,9 @@ For more details on our assignment, please check out the [debriefing document](h
 For detailed information on collaboration, visit [this wiki page](https://github.com/kylebot0/foxfit/wiki/Collaboration)
 
 ## Data
-(Data verhaal)
+Our data is picked up from the FoxFit database with SQL queries. On [this wiki page](https://github.com/kylebot0/foxfit/wiki/Data-object), you can read more about the original format of this data. We also made a scheme to visualize the relations between the different data tables, which can be found on [this wiki page](https://github.com/kylebot0/foxfit/wiki/Data-Analysis).
+
+To be able to use this data the way we want, we set up an API endpoint in `app.js`. The multiple endpoints and the way it can be used is explained [here](https://github.com/kylebot0/foxfit/wiki/Code#api).
 
 ## Features 🛠️
 
@@ -180,7 +182,7 @@ localhost:9000 || Or the port that you setup
 
 ## Credits
 
-- -
+- Annette Brons for providing feedback throughout the process.
 
 
 ## License

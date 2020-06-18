@@ -39,7 +39,9 @@ For more details on our assignment, please check out the [debriefing document](h
 For detailed information on collaboration, visit [this wiki page](https://github.com/kylebot0/foxfit/wiki/Collaboration)
 
 ## Data
-(Data verhaal)
+De data wordt door middel van SQL Queries opgehaald uit de foxfit database. Lees [hier](https://github.com/kylebot0/foxfit/wiki/Data-object) meer over hoe deze data eruit ziet. Daarnaast hebben we in kaart gebracht hoe de data zich tot elkaar verhoudt. Bekijk [hier](https://github.com/kylebot0/foxfit/wiki/Data-Analysis) de analyse.
+
+Om de data in onze applicatie te gebruiken hebben wij een API endpoint opgezet in de `app.js`. Uitleg over de verschillende endpoints en hoe deze benaderd kunnen worden, is [hier](https://github.com/kylebot0/foxfit/wiki/Code#api) te vinden.
 
 ## Features 🛠️
 

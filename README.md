@@ -144,7 +144,7 @@ localhost:9000 || Or the port that you setup
 
 ## Credits
 
-- -
+- Annette Brons for providing feedback throughout the process.
 
 
 ## License

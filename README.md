@@ -56,35 +56,35 @@ To be able to use this data the way we want, we set up an API endpoint in `app.j
 ## Features 🛠️
 
 ### Compare motion
-<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/beweging_grafiek.gif" width="200" />
+<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/beweging_grafiek.gif" width="500" />
 With this graph you can easily view the child's movement with different weeks, and you can also filter the activity by pressing the check mark in the legend.
 
 ### Date and day
-<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/datum_beweging_grafiek.gif" width="200" />
+<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/datum_beweging_grafiek.gif" width="500" />
 Each week you can see the days of the different bars on the side. If you hover over the day you will see the date of that bar / day.
 
 ### Slider for comparison
-<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/slider_beweging_grafiek.gif" width="200" />
+<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/slider_beweging_grafiek.gif" width="500" />
 To make comparisons easier, you can put a slider on either side of the graphs. With this slider, a line is drawn at the same points on the axis. To remove this slider you can press "R".
 
 ### Comparing feeling and movement
-<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/gevoel_grafiek.gif" width="200" />
+<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/gevoel_grafiek.gif" width="500" />
 This graph shows how the child felt per week and how much the child has moved each week. This allows the caregiver to observe the effect of movement on the child's mood and to see it every week. The different intensity groups can be turned off and on in the graph by clicking the checkmarks in the legend.
 
 ### Morning and evening feel
-<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/gevoel_hover_grafiek.gif" width="200" />
+<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/gevoel_hover_grafiek.gif" width="500" />
 By moving the mouse over the different bars of the bottom graph, the exact figure for each morning and evening is visible. In addition to the course of the whole week, the results can also be seen per day.
 
 ### Scores of all weeks
-<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/scores_grafiek.gif" width="200" />
+<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/scores_grafiek.gif" width="500" />
 With the scores graph you can compare the scores of each week, there is also a line to indicate the daily goal. To compare all weeks, you can select "All weeks" in the dropdown menu.
 
 ### Discover planets
-<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/kinderen_grafiek.gif" width="200" />
+<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/kinderen_grafiek.gif" width="500" />
 As soon as every week is over, a new planet is discovered. The client can also give a trophy that will be placed above the planet.
 
 ### Score graph
-<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/kinderen_hover_grafiek.gif" width="200" />
+<img src="https://github.com/kylebot0/foxfit/blob/master/public/images/gifs/kinderen_hover_grafiek.gif" width="500" />
 You can also click on a planet, where the week is visible and a graph is made with the feelings of the children. You can also see the accompanying trophy. If the week is halfway completed, a graph will still be created.
 
 

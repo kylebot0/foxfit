@@ -1,7 +1,7 @@
 
 # Foxfit
 
-![preview](https://github.com/kylebot0/foxfit/blob/master/wiki-assets/Dagdoelen/Dagdoel_2.png)
+![image](https://user-images.githubusercontent.com/43671292/84998641-66e4eb80-b150-11ea-857c-87e1a50a3bf6.png)
 ## Table of Contents 🗃
 
 - [Live demo](#Live-demo)

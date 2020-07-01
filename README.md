@@ -46,6 +46,15 @@ For more details on our assignment, please check out the [debriefing document](h
 
 ## Collaboration
 For detailed information on collaboration, visit [this wiki page](https://github.com/kylebot0/foxfit/wiki/Collaboration)
+And for the individual documentation / product biography, these are the wikis:
+### Wiki Kyle
+https://github.com/kylebot0/meesterproef-1920/wiki
+
+### Wiki Giovanni
+https://github.com/GiovanniKaaijk/meesterproef-1920/wiki
+
+### Wiki Lennart
+https://github.com/lennartdeknikker/meesterproef-1920/wiki
 
 ## Data
 Our data is picked up from the FoxFit database with SQL queries. On [this wiki page](https://github.com/kylebot0/foxfit/wiki/Data-object), you can read more about the original format of this data. We also made a scheme to visualize the relations between the different data tables, which can be found on [this wiki page](https://github.com/kylebot0/foxfit/wiki/Data-Analysis).
